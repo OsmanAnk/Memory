@@ -3,6 +3,9 @@ import './styles/style.scss'
 init()
 
 function init() {
+    const playRef = document.getElementById("play")
+    playRef?.addEventListener("click", startGame);
+
     const fieldRef = document.getElementById("field");
     if (fieldRef) {
         fieldRef.addEventListener("click", e => {
@@ -12,4 +15,9 @@ function init() {
             }
         })
     }
+}
+
+function startGame() {
+    const homeRef = document.getElementById("home");
+    homeRef?.classList.add("d_none")
 }

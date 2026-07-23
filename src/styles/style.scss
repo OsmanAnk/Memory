@@ -1,6 +1,129 @@
+@font-face {
+    font-family: 'Almarai';
+    src: url('/assets/fonts/Almarai-Regular.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'RedRose';
+    src: url('/assets/fonts/RedRose-VariableFont_wght.ttf') format('truetype');
+}
+
 body {
+    margin: 0;
+}
+
+.home {
+    background-color: #303131;
     height: 100vh;
-    background-color: blue;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 96px;
+
+    &__intro {
+        color: white;
+        display: flex;
+        flex-direction: column;
+        gap: 32px;
+    }
+
+    &__h2,
+    &__h1 {
+        margin: 0;
+    }
+
+    &__h2 {
+        font-family: 'Almarai';
+        font-weight: 400;
+        font-style: normal;
+        font-size: 48px;
+        line-height: 100%;
+        letter-spacing: 0%;
+    }
+
+    &__h1 {
+        font-family: 'RedRose';
+        font-weight: 700;
+        font-style: normal;
+        font-size: 140px;
+        line-height: 100%;
+        letter-spacing: 0%;
+    }
+}
+
+.play {
+    position: relative;
+    isolation: isolate;
+    overflow: visible;
+
+    font-family: 'RedRose';
+    font-weight: 700;
+    font-style: normal;
+    font-size: 40px;
+    line-height: 100%;
+    letter-spacing: 0%;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 24px;
+    border: none;
+    padding: 24px;
+    background: transparent;
+
+    &::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: #F0EA6E;
+        z-index: -1;
+        transition: transform 300ms ease-in-out;
+    }
+
+    &__icon {
+        width: 64px;
+        height: 64px;
+        transition: transform 300ms ease-in-out;
+    }
+
+    &__p {
+        margin: 0;
+    }
+
+    &__arrow {
+        display: inline-block;
+        width: 64px;
+        height: 24px;
+        background-image: url('/assets/icons/Arrow 1.svg');
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: contain;
+        transition: none;
+    }
+
+    &:hover {
+        cursor: pointer;
+    }
+
+    &:hover::before {
+        transform: scale(1.1);
+    }
+
+    &:hover &__icon {
+        transform: scale(1.1) rotate(-30deg);
+    }
+
+    &:hover &__arrow {
+        background-image: url('/assets/icons/Arrow 2.svg');
+        transform: scale(2);
+    }
+}
+
+.controller {
+    position: absolute;
+    bottom: 30px;
+    left: 0;
 }
 
 .card {
@@ -30,7 +153,11 @@ body {
 
     }
 
-    &.is-flipped .card__inner{
+    &.is-flipped .card__inner {
         transform: rotateY(180deg);
     }
+}
+
+.d_none {
+    display: none;
 }
