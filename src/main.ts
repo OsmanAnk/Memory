@@ -20,4 +20,7 @@ function init() {
 function startGame() {
     const homeRef = document.getElementById("home");
     homeRef?.classList.add("d_none")
+
+    const settingsRef = document.getElementById("settings")
+    settingsRef?.classList.remove("d_none")
 }
