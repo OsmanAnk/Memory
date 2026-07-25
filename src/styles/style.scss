@@ -132,7 +132,10 @@ body {
     align-items: center;
     justify-content: center;
     flex-direction: column;
+    min-height: 100vh;
+    gap: 48px;
 }
+
 
 .headline {
 
@@ -154,6 +157,101 @@ body {
 }
 
 
+main {
+    width: min(1120px, calc(100% - 48px));
+    display: flex;
+    align-items: stretch;
+    justify-content: space-between;
+    gap: 48px;
+}
+
+.options,
+.preview {
+    flex: 1;
+}
+
+.options {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+
+.option {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.preview {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 24px;
+}
+
+.option {
+
+    &__head {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    &__icon {
+        width: 32px;
+        height: 32px;
+        object-fit: contain;
+    }
+
+    &__title {
+        font-family: 'RedRose';
+        font-weight: 700;
+        font-size: 32px;
+        line-height: 100%;
+    }
+}
+
+.choices {
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 16px;
+
+    &__label {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-family: 'Almarai';
+        font-size: 20px;
+        line-height: 120%;
+        cursor: pointer;
+    }
+
+    &__item {
+        width: 32px;
+        height: 32px;
+        margin: 0;
+        cursor: pointer;
+    }
+}
+
+.preview {
+
+    &__image {
+        min-height: 280px;
+        border: 2px solid #303131;
+    }
+
+    &__img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
+
+    &__actions {
+        min-height: 64px;
+    }
+}
 
 
 .card {
