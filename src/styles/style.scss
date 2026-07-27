@@ -21,11 +21,10 @@ body {
 .home {
     background-color: #303131;
     height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     flex-direction: column;
     gap: 96px;
+
+    @include flex-center;
 
     &__intro {
         color: white;
@@ -134,23 +133,20 @@ body {
 
 .settings {
     margin: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     height: 100vh;
+    @include flex-center;
 }
 
 .main {
-    width: min(1120px, calc(100% - 48px));
+    width: min(1440px, calc(100% - 48px));
     display: flex;
     align-items: stretch;
     justify-content: space-between;
     gap: 48px;
 }
 
-.settings__left,
-.preview {
-    flex: 1;
+.settings__left {
+    flex: 1.4;
 }
 
 .settings__left {
@@ -303,6 +299,12 @@ body {
     }
 }
 
+.settings__right {
+    flex: 1.4;
+    @include flex-center;
+    flex-direction: column;
+}
+
 .preview {
 
     &__image {
@@ -318,6 +320,101 @@ body {
 
     &__actions {
         min-height: 64px;
+    }
+}
+
+.chosen {
+    background: #F6F6F6;
+    font-family: "Almarai";
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 100%;
+    margin-top: 48px;
+    margin-left: calc(7.5% - 52px);
+    width: 85%;
+    align-self: flex-start;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    // gap: 18px;
+
+    padding: 12px 16px;
+    box-sizing: border-box;
+    cursor: pointer;
+
+    &>span {
+        padding: 0;
+        text-align: center;
+        white-space: nowrap;
+    }
+
+    &__theme {
+        width: 172px;
+    }
+
+    &__player {
+        min-width: 96px;
+    }
+
+    &__board {
+        min-width: 112px;
+    }
+
+    &__line {
+        height: 64px;
+        width: auto;
+        padding: 0 9px;
+    }
+
+    &__line-3 {
+        transform: rotate(115deg);
+        height: 24px;
+        width: auto;
+    }
+
+    &__button {
+        font-size: 20px;
+        margin: 0 0 0 12px;
+        padding: 16px;
+
+        .play__icon {
+            width: 32px;
+            height: 32px;
+        }
+
+        &:hover .play__icon {
+            transform: scale(1.1) rotate(-15deg);
+        }
+    }
+
+    &--complete {
+        width: min(100%, calc(100vw - 48px));
+        justify-content: space-between;
+        animation: chosen-bounce-right 420ms ease-out;
+    }
+
+}
+
+@keyframes chosen-bounce-right {
+    0% {
+        width: 85%;
+    }
+
+    45% {
+        width: min(calc(100% + 16px), calc(100vw - 48px));
+    }
+
+    65% {
+        width: min(calc(100% - 8px), calc(100vw - 48px));
+    }
+
+    82% {
+        width: min(calc(100% + 8px), calc(100vw - 48px));
+    }
+
+    100% {
+        width: min(100%, calc(100vw - 48px));
     }
 }
 

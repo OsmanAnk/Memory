@@ -35,16 +35,54 @@ function checkboxes(option: string) {
     checkboxes.forEach((box) => {
         box.addEventListener("change", (e) => {
             const currentCheckbox = e.target as HTMLInputElement;
-            checkedImg(currentCheckbox)
+            checkedImg(currentCheckbox);
+            updateChosenText(option, currentCheckbox);
             if (currentCheckbox.checked) {
                 checkboxes.forEach((other) => {
                     if (other !== e.target) {
                         other.checked = false;
-                        uncheckedImg(other)
+                        uncheckedImg(other);
                     }
                 });
             }
+            updateChosenState();
         });
+    });
+}
+
+function updateChosenText(option: string, checkbox: HTMLInputElement) {
+    const chosenTextRef = document.getElementById("chosen__" + option);
+    if (!chosenTextRef) return;
+
+    const label = checkbox.closest(".choices__label");
+    const text = label?.querySelector(".choices__text")?.textContent;
+    if (text) {
+        chosenTextRef.textContent = text;
+    }
+}
+
+function updateChosenState() {
+    const chosenRef = document.querySelector<HTMLElement>(".chosen");
+    const hasTheme = Boolean(document.querySelector<HTMLInputElement>(".choices__item--theme:checked"));
+    const hasPlayer = Boolean(document.querySelector<HTMLInputElement>(".choices__item--player:checked"));
+    const hasBoard = Boolean(document.querySelector<HTMLInputElement>(".choices__item--board:checked"));
+    const isComplete = hasTheme && hasPlayer && hasBoard;
+    if (isComplete) {
+        chosenRef?.classList.add("chosen--complete");
+    }
+
+    const lineRefs = document.querySelectorAll<HTMLElement>(".chosen__line")
+    const line3Refs = document.querySelectorAll<HTMLElement>(".chosen__line-3")
+
+    lineRefs.forEach((line) => {
+        if (isComplete) {
+            line.classList.add("d_none");
+        }
+    });
+    line3Refs.forEach(line3 => {
+        if (isComplete) {
+            line3.classList.remove("d_none");
+        }
     });
 }
 
