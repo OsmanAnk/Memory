@@ -1,10 +1,15 @@
 import './styles/style.scss'
+import { cardsByTheme } from './cards'
+
+let flippedCard: HTMLButtonElement[] = [];
 
 init()
 
 function init() {
     const playRef = document.getElementById("play")
     playRef?.addEventListener("click", startGame);
+    const startRef = document.getElementById("start")
+    startRef?.addEventListener("click", startMemory);
 
     checkboxes("theme");
     checkboxes("player");
@@ -30,11 +35,65 @@ function startGame() {
     settingsRef?.classList.remove("d_none")
 }
 
+function startMemory() {
+    const theme = document.querySelector<HTMLInputElement>(".choices__item--theme:checked")!.id;
+    const player = document.querySelector<HTMLInputElement>(".choices__item--player:checked")!.id;
+    const board = document.querySelector<HTMLInputElement>(".choices__item--board:checked")!.id;
+
+    gameStarted(theme, player, board)
+    const settingsRef = document.getElementById("settings");
+    settingsRef?.classList.add("d_none");
+}
+
+function gameStarted(theme: string, player: string, board: string) {
+    const cards = cardsByTheme[theme];
+    // console.log(cards, player, board);
+    const cardCount = Number(board.replace("board-size-", ""));
+    const pairCount = cardCount / 2;
+    const selectedCards = cards.slice(0, pairCount);
+    const doubleSelectedCards = selectedCards.concat(selectedCards);
+    shuffleCards(doubleSelectedCards)
+    const cardsRef = document.getElementById("cards");
+    const cardsHtml = doubleSelectedCards.map(card => {
+        return `<button class="card" data-card="${card}">
+        <img src="${card}" alt="">
+        </button>`;
+    }).join("");
+
+    cardsRef?.addEventListener("click", (event) => {
+        const card = (event.target as HTMLElement).closest(".card");
+        if (!card) return;
+        console.log(card);
+
+        card.classList.add("is-flipped");
+    });
+
+    cardsRef!.innerHTML = cardsHtml;
+
+
+    const columns = cardCount === 16 ? 4 : 6;
+
+    const cardsGrid = document.getElementById("cards");
+    if (cardsGrid) {
+        cardsGrid.style.gridTemplateColumns = `repeat(${columns}, 1fr)`;
+    }
+}
+
+function shuffleCards(doubleSelectedCards: string[]) {
+    for (let i = doubleSelectedCards.length - 1; i > 0; i--) {
+        let j = Math.floor(Math.random() * (i + 1));
+        let temp = doubleSelectedCards[i];
+        doubleSelectedCards[i] = doubleSelectedCards[j];
+        doubleSelectedCards[j] = temp;
+    }
+}
+
 function checkboxes(option: string) {
     const checkboxes = document.querySelectorAll<HTMLInputElement>(".choices__item--" + option);
     checkboxes.forEach((box) => {
         box.addEventListener("change", (e) => {
             const currentCheckbox = e.target as HTMLInputElement;
+
             checkedImg(currentCheckbox);
             updateChosenText(option, currentCheckbox);
             if (currentCheckbox.checked) {
@@ -67,8 +126,14 @@ function updateChosenState() {
     const hasPlayer = Boolean(document.querySelector<HTMLInputElement>(".choices__item--player:checked"));
     const hasBoard = Boolean(document.querySelector<HTMLInputElement>(".choices__item--board:checked"));
     const isComplete = hasTheme && hasPlayer && hasBoard;
+
     if (isComplete) {
         chosenRef?.classList.add("chosen--complete");
+    }
+
+    const startRef = document.getElementById("start") as HTMLButtonElement | null;
+    if (startRef) {
+        startRef.disabled = !isComplete;
     }
 
     const lineRefs = document.querySelectorAll<HTMLElement>(".chosen__line")
@@ -135,4 +200,8 @@ function showPreviewImg(checkbox: HTMLInputElement) {
     const previewImg = document.getElementById("preview-" + themeName);
 
     previewImg?.classList.remove("d_none");
+}
+
+function createMemory() {
+
 }

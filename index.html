@@ -24,7 +24,7 @@
     </section>
 
     <section class="settings" id="settings">
-        <div class="main">
+        <div class="settings__main">
             <div class="settings__left">
                 <div class="headline">
                     <h1 class="headline__h1">Settings</h1>
@@ -121,7 +121,7 @@
                     <img class="chosen__line" src="assets/icons/Line 6.svg" alt="">
                     <img class="chosen__line-3 d_none" src="assets/icons/Line 3 short.svg" alt="">
                     <span class="chosen__board" id="chosen__board">Board size</span>
-                    <button class="chosen__button play">
+                    <button class="chosen__button play" id="start" disabled>
                         <img class="play__icon" src="assets/icons/smart_display.svg" alt="">
                         <p class="play__p">Start</p>
                     </button>
@@ -129,6 +129,45 @@
             </div>
         </div>
 
+    </section>
+
+    <section class="memory" id="memory">
+        <header class="memory__header">
+            <div class="players">
+                <div class="players__blue">
+                    <img class="" src="assets/icons/code_vibes/player blue.svg" alt="">
+                    <span class="">
+                        Blue
+                    </span>
+                    <div class="players__blue--counter">
+                        0
+                    </div>
+                </div>
+                <div class="players__orange">
+                    <img class="assets/icons/code_vibes/player orange.svg" src="" alt="">
+                    <span class="">
+                        Orange
+                    </span>
+                    <div>
+                        0
+                    </div>
+                </div>
+            </div>
+            <div class="current-player">
+                <span>Current player: </span>
+                <img src="assets/icons/code_vibes/player blue.svg" alt="">
+            </div>
+            <div class="exit">
+                <button class="exit__button">
+                    <img src="assets/icons/code_vibes/exit.svg" alt="">
+                    <span>Exit game</span>
+                </button>
+            </div>
+        </header>
+        <div class="memory__main">
+            <div class="cards" id="cards">
+            </div>
+        </div>
     </section>
 
     <!-- <section id="field">
