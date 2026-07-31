@@ -4,6 +4,8 @@ interface CardsByTheme {
 
 const base = import.meta.env.BASE_URL;
 
+export const cardBack = `${base}assets/icons/code_vibes/code vibes back.svg`;
+
 export const cardsByTheme: CardsByTheme = {
     "theme-code-vibes": [
         `${base}assets/icons/code_vibes/code vibe angular.svg`,

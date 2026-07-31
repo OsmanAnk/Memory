@@ -152,9 +152,6 @@ body {
 
 .settings__left {
     flex: 1.4;
-}
-
-.settings__left {
     display: flex;
     flex-direction: column;
     gap: 48px;
@@ -403,7 +400,7 @@ body {
                 background: #DBDBD6;
             }
 
-            &hover::after {
+            &:hover::after {
                 transform: none;
             }
         }
@@ -526,6 +523,7 @@ body {
 .memory__main {
     display: flex;
     justify-content: center;
+    margin-top: 12px;
 }
 
 .cards {
@@ -534,41 +532,145 @@ body {
 }
 
 .card {
-    width: 124px;
-    height: 124px;
+    width: 184px;
+    height: 174px;
+    background-color: transparent;
+    border: none;
+
+    &__inner {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        transform-style: preserve-3d;
+        transition: all 300ms ease-in-out;
+    }
+
+    &__face {
+        position: absolute;
+        inset: 0;
+        background-color: black;
+        backface-visibility: hidden;
+
+        & img {
+            width: 100%;
+            height: 100%;
+        }
+
+        &--back {
+            transform: rotateY(180deg);
+            background-color: red;
+        }
+
+    }
+
+    &.is-flipped .card__inner {
+        transform: rotateY(180deg);
+    }
 }
 
-// .card {
-//     height: 100px;
-//     aspect-ratio: 1 / 1;
-//     background-color: transparent;
-//     border: none;
+.modal {
+    @include flex-center;
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
 
-//     &__inner {
-//         position: relative;
-//         width: 100%;
-//         height: 100%;
-//         transform-style: preserve-3d;
-//         transition: all 300ms ease-in-out;
-//     }
 
-//     &__face {
-//         position: absolute;
-//         inset: 0;
-//         background-color: black;
-//         backface-visibility: hidden;
+    &__content {
+        @include flex-center;
+        flex-direction: column;
+        background-color: white;
+        padding: 52px;
+        gap: 64px;
+    }
 
-//         &--back {
-//             transform: rotateY(180deg);
-//             background-color: red;
-//         }
+    &__text {
+        font-family: 'RedRose';
+        font-weight: 700;
+        font-style: normal;
+        font-size: 32px;
+        line-height: 40px;
+        letter-spacing: 0%;
+        text-align: center;
+        color: #303131;
+    }
 
-//     }
+    &__btns {
+        @include flex-center;
+        gap: 24px;
+    }
 
-//     &.is-flipped .card__inner {
-//         transform: rotateY(180deg);
-//     }
-// }
+    &__back {
+        font-family: 'RedRose';
+        font-weight: 700;
+        font-style: normal;
+        font-size: 20px;
+        line-height: 100%;
+        letter-spacing: 0%;
+        color: #FFFFFF;
+        background: #66CFBC;
+        padding: 16px 20px;
+        border: 3px solid transparent;
+        box-sizing: border-box;
+
+        &:hover {
+            cursor: pointer;
+            border-color: #3ABCA4;
+            background: #66CFBCB2;
+        }
+    }
+
+    &__exit {
+        font-family: 'RedRose';
+        font-weight: 700;
+        font-style: normal;
+        font-size: 20px;
+        line-height: 100%;
+        letter-spacing: 0%;
+        color: #4DD5BC;
+        background: #86E9D624;
+        padding: 17px 21px;
+        border: 2px solid #4DD5BC;
+        box-sizing: border-box;
+
+        &:hover {
+            cursor: pointer;
+            padding: 16px 20px;
+            border: 3px solid #4DD5BC;
+            box-shadow: 4px 4px 6px 0px #4DD5BC4D;
+        }
+    }
+
+    &--open .modal__content {
+        animation: slide-in 400ms ease-out forwards;
+    }
+
+    &--closing .modal__content {
+        animation: slide-out 400ms ease-in forwards;
+    }
+}
+
+@keyframes slide-in {
+    0% {
+        transform: translateY(-100vh);
+    }
+
+    100% {
+        transform: translateY(0);
+    }
+}
+
+@keyframes slide-out {
+    0% {
+        transform: translateY(0);
+    }
+
+    100% {
+        transform: translateY(-100vh);
+    }
+}
 
 .d_none {
     display: none;

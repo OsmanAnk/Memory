@@ -158,7 +158,7 @@
                 <img src="assets/icons/code_vibes/player blue.svg" alt="">
             </div>
             <div class="exit">
-                <button class="exit__button">
+                <button class="exit__button" id="exit-btn">
                     <img src="assets/icons/code_vibes/exit.svg" alt="">
                     <span>Exit game</span>
                 </button>
@@ -169,15 +169,15 @@
             </div>
         </div>
     </section>
-
-    <!-- <section id="field">
-        <button class="card">
-            <div class="card__inner">
-                <div class="card__face"> </div>
-                <div class="card__face card__face--back"> </div>
+    <div class="modal d_none" id="modal">
+        <div class="modal__content">
+            <span class="modal__text">Are you sure you want to quit<br> the game?</span>
+            <div class="modal__btns">
+                <button class="modal__back">Back to game</button>
+                <button class="modal__exit">Exit game</button>
             </div>
-        </button>
-    </section> -->
+        </div>
+    </div>
     <script type="module" src="/src/main.ts"></script>
 </body>
 

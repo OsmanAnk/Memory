@@ -1,5 +1,5 @@
 import './styles/style.scss'
-import { cardsByTheme } from './cards'
+import { cardBack, cardsByTheme } from './cards'
 
 let flippedCard: HTMLButtonElement[] = [];
 
@@ -15,6 +15,7 @@ function init() {
     checkboxes("player");
     checkboxes("board");
     hoverPreview();
+    openModal();
 
     const fieldRef = document.getElementById("field");
     if (fieldRef) {
@@ -56,16 +57,41 @@ function gameStarted(theme: string, player: string, board: string) {
     const cardsRef = document.getElementById("cards");
     const cardsHtml = doubleSelectedCards.map(card => {
         return `<button class="card" data-card="${card}">
-        <img src="${card}" alt="">
-        </button>`;
+                    <div class="card__inner">
+                        <div class="card__face">
+                            <img src="${cardBack}" alt="">
+                        </div>
+                        <div class="card__face card__face--back">
+                            <img src="${card}" alt="">
+                        </div>
+                    </div>
+                </button>`;
     }).join("");
 
     cardsRef?.addEventListener("click", (event) => {
         const card = (event.target as HTMLElement).closest(".card");
         if (!card) return;
-        console.log(card);
+        if (card.classList.contains("is-flipped")) return;
+        if (flippedCard.length === 2) return;
+        // console.log(card);
 
         card.classList.add("is-flipped");
+        flippedCard.push(card as HTMLButtonElement)
+
+        if (flippedCard.length === 2) {
+            if (flippedCard[0].dataset.card === flippedCard[1].dataset.card) {
+                console.log("match");
+                console.log(flippedCard);
+                flippedCard = [];
+            } else {
+                console.log("no match", flippedCard[0].dataset.card, flippedCard[1].dataset.card);
+                setTimeout(() => {
+                    flippedCard[0].classList.remove("is-flipped");
+                    flippedCard[1].classList.remove("is-flipped");
+                    flippedCard = [];
+                }, 1000);
+            }
+        }
     });
 
     cardsRef!.innerHTML = cardsHtml;
@@ -202,6 +228,37 @@ function showPreviewImg(checkbox: HTMLInputElement) {
     previewImg?.classList.remove("d_none");
 }
 
-function createMemory() {
+function openModal() {
+    const modal = document.getElementById("modal");
+    const btn = document.getElementById("exit-btn")
+    const back = document.querySelector(".modal__back");
 
+    btn?.addEventListener("click", () => {
+        modal?.classList.remove("d_none", "modal--closing");
+        modal?.classList.add("modal--open")
+    });
+
+    back?.addEventListener("click", () => {
+        if (modal) {
+            closeModal(modal);
+        }
+    });
+
+    modal?.addEventListener("click", (e) => {
+        if (e.target === modal) {
+            closeModal(modal);
+        }
+    });
+}
+
+function closeModal(modal: HTMLElement) {
+    if (!modal) return;
+
+    modal.classList.remove("modal--open");
+    modal.classList.add("modal--closing");
+
+    setTimeout(() => {
+        modal.classList.add("d_none");
+        modal.classList.remove("modal--closing");
+    }, 300);
 }
