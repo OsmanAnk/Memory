@@ -218,6 +218,9 @@ body {
   background-color: transparent;
   border: none;
 }
+.card:hover {
+  cursor: pointer;
+}
 .card__inner {
   position: relative;
   width: 100%;
@@ -230,6 +233,13 @@ body {
   inset: 0;
   background-color: black;
   backface-visibility: hidden;
+  overflow: hidden;
+}
+.card__face img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 .card__face--back {
   transform: rotateY(180deg);
@@ -237,6 +247,14 @@ body {
 }
 .card.is-flipped .card__inner {
   transform: rotateY(180deg);
+}
+
+.card.is-matched .card__face--back::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  box-shadow: inset 0 0 0 4px #4dd5bc;
+  pointer-events: none;
 }
 
 .d_none {

@@ -2,6 +2,9 @@ import './styles/style.scss'
 import { cardBack, cardsByTheme } from './cards'
 
 let flippedCard: HTMLButtonElement[] = [];
+let activePlayer: string = "blue";
+let blueScore: number = 0;
+let orangeScore: number = 0;
 
 init()
 
@@ -16,6 +19,7 @@ function init() {
     checkboxes("board");
     hoverPreview();
     openModal();
+    currentPlayer();
 
     const fieldRef = document.getElementById("field");
     if (fieldRef) {
@@ -30,10 +34,10 @@ function init() {
 
 function startGame() {
     const homeRef = document.getElementById("home");
-    homeRef?.classList.add("d_none")
+    homeRef?.classList.add("d_none");
 
-    const settingsRef = document.getElementById("settings")
-    settingsRef?.classList.remove("d_none")
+    const settingsRef = document.getElementById("settings");
+    settingsRef?.classList.remove("d_none");
 }
 
 function startMemory() {
@@ -41,14 +45,19 @@ function startMemory() {
     const player = document.querySelector<HTMLInputElement>(".choices__item--player:checked")!.id;
     const board = document.querySelector<HTMLInputElement>(".choices__item--board:checked")!.id;
 
+    resetScore();
+    activePlayer = player.replace("player-", "");
+    currentPlayer();
     gameStarted(theme, player, board)
+
     const settingsRef = document.getElementById("settings");
+    const memoryRef = document.getElementById("memory");
     settingsRef?.classList.add("d_none");
+    memoryRef?.classList.remove("d_none");
 }
 
 function gameStarted(theme: string, player: string, board: string) {
     const cards = cardsByTheme[theme];
-    // console.log(cards, player, board);
     const cardCount = Number(board.replace("board-size-", ""));
     const pairCount = cardCount / 2;
     const selectedCards = cards.slice(0, pairCount);
@@ -73,22 +82,27 @@ function gameStarted(theme: string, player: string, board: string) {
         if (!card) return;
         if (card.classList.contains("is-flipped")) return;
         if (flippedCard.length === 2) return;
-        // console.log(card);
 
         card.classList.add("is-flipped");
         flippedCard.push(card as HTMLButtonElement)
 
         if (flippedCard.length === 2) {
             if (flippedCard[0].dataset.card === flippedCard[1].dataset.card) {
-                console.log("match");
-                console.log(flippedCard);
-                flippedCard = [];
+                setTimeout(() => {
+                    flippedCard[0].classList.add("is-matched");
+                    flippedCard[1].classList.add("is-matched");
+                    flippedCard = [];
+                    score();
+                    cardsCounter(cardCount);
+                    //hier vergleich, wie viele karten noch im spiel übrig sind
+                }, 300);
             } else {
-                console.log("no match", flippedCard[0].dataset.card, flippedCard[1].dataset.card);
                 setTimeout(() => {
                     flippedCard[0].classList.remove("is-flipped");
                     flippedCard[1].classList.remove("is-flipped");
                     flippedCard = [];
+                    switchPlayer();
+                    currentPlayer();
                 }, 1000);
             }
         }
@@ -97,7 +111,7 @@ function gameStarted(theme: string, player: string, board: string) {
     cardsRef!.innerHTML = cardsHtml;
 
 
-    const columns = cardCount === 16 ? 4 : 6;
+    const columns = cardCount === 4 ? 2 : cardCount === 16 ? 4 : 6;
 
     const cardsGrid = document.getElementById("cards");
     if (cardsGrid) {
@@ -232,6 +246,8 @@ function openModal() {
     const modal = document.getElementById("modal");
     const btn = document.getElementById("exit-btn")
     const back = document.querySelector(".modal__back");
+    const exit = document.querySelector(".modal__exit");
+    const settingsRef = document.getElementById("settings");
 
     btn?.addEventListener("click", () => {
         modal?.classList.remove("d_none", "modal--closing");
@@ -244,10 +260,17 @@ function openModal() {
         }
     });
 
-    modal?.addEventListener("click", (e) => {
-        if (e.target === modal) {
-            closeModal(modal);
-        }
+    exit?.addEventListener("click", () => {
+        if (!modal) return;
+
+        const memoryRef = document.getElementById("memory");
+        const settingsRef = document.getElementById("settings");
+
+        closeModal(modal);
+        memoryRef?.classList.add("d_none");
+        settingsRef?.classList.remove("d_none");
+        flippedCard = [];
+        resetScore();
     });
 }
 
@@ -261,4 +284,81 @@ function closeModal(modal: HTMLElement) {
         modal.classList.add("d_none");
         modal.classList.remove("modal--closing");
     }, 300);
+}
+
+function currentPlayer() {
+    const currentPlayerIconRef = document.getElementById("current-player-icon") as HTMLImageElement | null;
+
+    if (!currentPlayerIconRef) return;
+    currentPlayerIconRef.src = `assets/icons/code_vibes/player ${activePlayer}.svg`
+}
+
+function switchPlayer() {
+    activePlayer = activePlayer === "blue" ? "orange" : "blue";
+}
+
+function score() {
+    let blueScoreRef = document.getElementById("players__blue--score");
+    let orangeScoreRef = document.getElementById("players__orange--score");
+
+    if (activePlayer === "blue") {
+        blueScore++;
+        blueScoreRef!.textContent = `${blueScore}`
+    } else {
+        orangeScore++;
+        orangeScoreRef!.textContent = `${orangeScore}`
+    }
+}
+
+function resetScore() {
+    blueScore = 0;
+    orangeScore = 0;
+
+    const blueScoreRef = document.getElementById("players__blue--score");
+    const orangeScoreRef = document.getElementById("players__orange--score");
+
+    if (blueScoreRef) blueScoreRef.textContent = "0";
+    if (orangeScoreRef) orangeScoreRef.textContent = "0";
+}
+
+function cardsCounter(cardCount: number) {
+
+    const matchedCards = document.querySelectorAll(".card.is-matched").length;
+    if (matchedCards === cardCount) {
+        if (blueScore > orangeScore) {
+            blueWins();
+        }
+        if (blueScore < orangeScore) {
+            gameOverScreen();
+            orangeWins()
+        }
+        if (blueScore === orangeScore) {
+            gameOverScreen();
+            draw()
+        }
+    }
+}
+
+function blueWins() {
+    gameOverScreen();
+    const endScreenRef = document.getElementById("final-score");
+
+}
+
+function gameOverScreen() {
+    const endScreenRef = document.getElementById("end-screen");
+    const blueScoreRef = document.getElementById("final-blue-score");
+    const orangeScoreRef = document.getElementById("final-orange-score");
+
+    blueScoreRef!.innerHTML = `${blueScore}`;
+    orangeScoreRef!.innerHTML = `${orangeScore}`;
+    endScreenRef?.classList.add("end-screen--open");
+
+    setTimeout(() => {
+        winnerScreen();
+    }, 3000);
+}
+
+function winnerScreen() {
+    
 }

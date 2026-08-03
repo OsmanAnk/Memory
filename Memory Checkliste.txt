@@ -1,0 +1,40 @@
+﻿Checkliste Memory
+
+
+Bitte erfülle alle Punkte auf dieser Liste, bevor du das Projekt einreichst. Solltest du weitere Extras eingebaut haben, erwähne das kurz, damit sich die Mentoren dies bei Bedarf anschauen können.
+User Story 1
+Als Benutzer möchte ich beim Öffnen der App eine optisch ansprechende Startseite vorfinden. Durch Klick auf einen Start-Button, gelange ich zu einer Übersicht der Spiel-Settings.
+* Der Homescreen ist entsprechend der Vorgabe umgesetzt.
+* Es gibt einen Button, der mich zur Settings-Page weiterleitet.
+* Controller-Icon mit Animation ist entsprechend positioniert.
+User Story 2
+Als Benutzer möchte ich eine Auswahl zwischen meiner Spielerfarbe, Größe des Spielfeldes sowie der optischen Gestaltung (Themes) treffen können. 
+* Ich habe die Auswahl zwischen 2 verschiedenen Spielern, z.B. Blau / Orange.
+* Ich habe die Wahl zwischen 3 verschiedenen Spielfeldgrößen: (4x4 / 4x6 / 6x6). 
+* Ich habe eine Auswahl an verschiedenen Darstellungen des Spielfeldes (Themes). 
+   * mindestens 2 Themes müssen ausgewählt werden können, weitere sind optional.
+User Story 3
+Als Benutzer möchte ich die Auswahl zwischen min. 2  verschiedenen Layouts haben.
+* Die Auswahl verändert das Farbschema.
+* Die Auswahl beeinflusst die Themengebiete der Memory-Bilder.
+User Story 4
+Als Benutzer möchte ich ein optisch ansprechendes Spielfeld & Spielerlebnis vorfinden.
+* Das Spielfeld entspricht der ausgewählten Größe (4x4 / 4x6 / 8x8).
+* Das ausgewählte Theme wird sowohl in Farbe als auch Motiven dargestellt.
+* Über dem Spielfeld befinden sich der aktuelle Punktestand sowie eine Anzeige des aktuellen Spielers und ein Button (“Exit Game”), um das Spielfeld zu verlassen.
+* Die Karten drehen sich beim Klick in einer flüssigen Animation um.
+User Story 5
+Als Benutzer erwarte ich nach Beendigung der Runde einen entsprechende Meldung sowie die Möglichkeit, eine neue Runde zu beginnen. Es erscheint eine “Game over” Anzeige mit aktuellem Punktestand.
+* Der Spieler mit den meisten Punkten wird als Gewinner angezeigt.
+Code Conventions
+Beachte, dass du für die Umsetzung des Projekts folgende Guidelines umgesetzt hast: 
+* Coding Konvention für HTML
+* Coding Konvention für TypeScript
+
+
+
+
+Checkliste - Memory
+	
+
+	2025

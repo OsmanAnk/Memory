@@ -85,6 +85,11 @@
                         <div class="choices">
                             <label class="choices__label">
                                 <input class="choices__item choices__item--board" type="checkbox" name="board-size"
+                                    id="board-size-4">
+                                <span class="choices__text">4 cards</span>
+                            </label>
+                            <label class="choices__label">
+                                <input class="choices__item choices__item--board" type="checkbox" name="board-size"
                                     id="board-size-16">
                                 <span class="choices__text">16 cards</span>
                             </label>
@@ -139,23 +144,23 @@
                     <span class="">
                         Blue
                     </span>
-                    <div class="players__blue--counter">
+                    <div id="players__blue--score" class="players__blue--score">
                         0
                     </div>
                 </div>
                 <div class="players__orange">
-                    <img class="assets/icons/code_vibes/player orange.svg" src="" alt="">
+                    <img class="" src="assets/icons/code_vibes/player orange.svg" alt="">
                     <span class="">
                         Orange
                     </span>
-                    <div>
+                    <div id="players__orange--score" class="players__orange--score">
                         0
                     </div>
                 </div>
             </div>
-            <div class="current-player">
+            <div class="current-player" id="current-player">
                 <span>Current player: </span>
-                <img src="assets/icons/code_vibes/player blue.svg" alt="">
+                <img id="current-player-icon" src="assets/icons/code_vibes/player blue.svg" alt="">
             </div>
             <div class="exit">
                 <button class="exit__button" id="exit-btn">
@@ -167,6 +172,31 @@
         <div class="memory__main">
             <div class="cards" id="cards">
             </div>
+        </div>
+    </section>
+    <section class="end-screen" id="end-screen">
+        <div class="game-over" id="game-over">
+            <span>Game over</span>
+            <div class="final-score" id="final-score">
+                <p class="final-score__title">Final score</p>
+                <div class="players final-score__players">
+                    <div class="players__blue">
+                        <img src="assets/icons/code_vibes/player blue.svg" alt="">
+                        <span>Blue</span>
+                        <div id="final-blue-score" class="players__blue--score">0</div>
+                    </div>
+                    <div class="players__orange">
+                        <img src="assets/icons/code_vibes/player orange.svg" alt="">
+                        <span>Orange</span>
+                        <div id="final-orange-score" class="players__orange--score">0</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="winner" id="winner">
+        <div class="winner__screen">
+            <img src="assets/img/Confetti.svg" alt="">
         </div>
     </section>
     <div class="modal d_none" id="modal">

@@ -456,7 +456,7 @@ body {
     padding: 18px;
     @include flex-center;
     flex-direction: row;
-    gap: 12px;
+    gap: 24px;
 
     &__blue,
     &__orange {
@@ -473,10 +473,18 @@ body {
 
     &__blue {
         color: #2BB1FF;
+
+        &--score {
+            width: 16px;
+        }
     }
 
     &__orange {
         color: #F58E39;
+
+        &--score {
+            width: 16px;
+        }
     }
 }
 
@@ -537,6 +545,10 @@ body {
     background-color: transparent;
     border: none;
 
+    &:hover {
+        cursor: pointer;
+    }
+
     &__inner {
         position: relative;
         width: 100%;
@@ -550,10 +562,13 @@ body {
         inset: 0;
         background-color: black;
         backface-visibility: hidden;
+        overflow: hidden;
 
         & img {
+            display: block;
             width: 100%;
             height: 100%;
+            object-fit: cover;
         }
 
         &--back {
@@ -566,6 +581,14 @@ body {
     &.is-flipped .card__inner {
         transform: rotateY(180deg);
     }
+}
+
+.card.is-matched .card__face--back::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    box-shadow: inset 0 0 0 4px #4dd5bc;
+    pointer-events: none;
 }
 
 .modal {
@@ -669,6 +692,87 @@ body {
 
     100% {
         transform: translateY(-100vh);
+    }
+}
+
+.end-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 900;
+    background: #303131;
+    @include flex-center;
+
+    transform: translateY(-100%);
+    transition: transform 600ms ease-out;
+
+    &--open {
+        transform: translateY(0);
+    }
+}
+
+.game-over {
+    background: #303131;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 96px;
+    transform: translateY(-24px);
+
+    &>span {
+        font-family: 'RedRose';
+        font-weight: 700;
+        font-size: 160px;
+        line-height: 100%;
+        color: #4DD5BC;
+        text-shadow:
+            -3px -1px 0 white,
+            -7px 0 8px #4DD5BC80;
+    }
+}
+
+.final-score {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+
+    &__title {
+        margin: 0;
+        font-family: 'Almarai';
+        font-weight: 700;
+        font-size: 28px;
+        line-height: 100%;
+        color: #FFFFFF;
+    }
+
+    &__players {
+        padding: 18px 24px;
+    }
+
+    & p {
+        font-family: 'RedRose';
+        font-weight: 400;
+        font-style: normal;
+        font-size: 26px;
+        line-height: 100%;
+        letter-spacing: 0%;
+        text-align: center;
+
+    }
+}
+
+.winner {
+    position: fixed;
+    inset: 0;
+    z-index: 900;
+    background: #303131;
+    @include flex-center;
+
+    transform: translateY(-100%);
+    transition: transform 600ms ease-out;
+
+    &--open {
+        transform: translateY(0);
     }
 }
 
