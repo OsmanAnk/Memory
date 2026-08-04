@@ -540,8 +540,8 @@ body {
 }
 
 .card {
-    width: 184px;
-    height: 174px;
+    box-sizing: border-box;
+    padding: 0;
     background-color: transparent;
     border: none;
 
@@ -581,6 +581,16 @@ body {
     &.is-flipped .card__inner {
         transform: rotateY(180deg);
     }
+}
+
+.cards--theme-code-vibes .card {
+    width: 184px;
+    height: 184px;
+}
+
+.cards--theme-gaming .card {
+    width: 161px;
+    height: 184px;
 }
 
 .card.is-matched .card__face--back::after {
@@ -717,17 +727,17 @@ body {
     align-items: center;
     gap: 96px;
     transform: translateY(-24px);
+}
 
-    &>span {
-        font-family: 'RedRose';
-        font-weight: 700;
-        font-size: 160px;
-        line-height: 100%;
-        color: #4DD5BC;
-        text-shadow:
-            -3px -1px 0 white,
-            -7px 0 8px #4DD5BC80;
-    }
+.end-title {
+    font-family: 'RedRose';
+    font-weight: 700;
+    font-size: 160px;
+    line-height: 100%;
+    color: #4DD5BC;
+    text-shadow:
+        -3px -1px 0 white,
+        -7px 0 8px #4DD5BC80;
 }
 
 .final-score {
@@ -764,7 +774,7 @@ body {
 .winner {
     position: fixed;
     inset: 0;
-    z-index: 900;
+    z-index: 901;
     background: #303131;
     @include flex-center;
 
@@ -773,6 +783,61 @@ body {
 
     &--open {
         transform: translateY(0);
+    }
+
+    &__inner {
+        @include flex-center;
+        flex-direction: column;
+        gap: 32px;
+    }
+
+    &__is {
+        font-family: 'RedRose';
+        font-weight: 400;
+        font-style: normal;
+        font-size: 40px;
+        line-height: 100%;
+        letter-spacing: 0%;
+        text-align: center;
+        color: white;
+    }
+
+    &__orange--text {
+        font-family: 'RedRose';
+        font-weight: 700;
+        font-style: normal;
+        font-size: 60px;
+        line-height: 100%;
+        letter-spacing: 0%;
+        text-align: center;
+        color: #F58E39;
+    }
+
+    &__blue--text {
+        font-family: 'RedRose';
+        font-weight: 700;
+        font-style: normal;
+        font-size: 60px;
+        line-height: 100%;
+        letter-spacing: 0%;
+        text-align: center;
+        color: #2BB1FF;
+    }
+
+    &__draw--text {
+        font-family: 'RedRose';
+        font-weight: 700;
+        font-style: normal;
+        font-size: 60px;
+        line-height: 100%;
+        letter-spacing: 0%;
+        text-align: center;
+        color: #4DD5BC;
+    }
+
+    &__img,
+    &__img {
+        margin: 32px 0;
     }
 }
 

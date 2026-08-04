@@ -2,9 +2,16 @@ interface CardsByTheme {
     [theme: string]: string[];
 }
 
+interface CardBackByTheme {
+    [theme: string]: string;
+}
+
 const base = import.meta.env.BASE_URL;
 
-export const cardBack = `${base}assets/icons/code_vibes/code vibes back.svg`;
+export const cardBackByTheme: CardBackByTheme = {
+    "theme-code-vibes": `${base}assets/icons/code_vibes/code vibes back.svg`,
+    "theme-gaming": `${base}assets/icons/gaming/Back.svg`,
+};
 
 export const cardsByTheme: CardsByTheme = {
     "theme-code-vibes": [
@@ -27,7 +34,24 @@ export const cardsByTheme: CardsByTheme = {
         `${base}assets/icons/code_vibes/code vibe vsc.svg`,
         `${base}assets/icons/code_vibes/code vibe vue.svg`,
     ],
-    "theme-gaming": [],
-    "theme-da-projects": [],
-    "theme-foods": [],
+    "theme-gaming": [
+        `${base}assets/icons/gaming/Ass.svg`,
+        `${base}assets/icons/gaming/Banana.svg`,
+        `${base}assets/icons/gaming/Circle.svg`,
+        `${base}assets/icons/gaming/Coin.svg`,
+        `${base}assets/icons/gaming/Controller.svg`,
+        `${base}assets/icons/gaming/Gameboy.svg`,
+        `${base}assets/icons/gaming/Käse.svg`,
+        `${base}assets/icons/gaming/Labyrinth.svg`,
+        `${base}assets/icons/gaming/Level up.svg`,
+        `${base}assets/icons/gaming/Mario.svg`,
+        `${base}assets/icons/gaming/Minecraft.svg`,
+        `${base}assets/icons/gaming/Pacman.svg`,
+        `${base}assets/icons/gaming/Play.svg`,
+        `${base}assets/icons/gaming/Puzzle.svg`,
+        `${base}assets/icons/gaming/Rectangle.svg`,
+        `${base}assets/icons/gaming/Snake.svg`,
+        `${base}assets/icons/gaming/Triangle.svg`,
+        `${base}assets/icons/gaming/Würfel.svg`,
+    ],
 };

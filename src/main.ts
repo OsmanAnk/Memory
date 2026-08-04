@@ -1,5 +1,5 @@
 import './styles/style.scss'
-import { cardBack, cardsByTheme } from './cards'
+import { cardBackByTheme, cardsByTheme } from './cards'
 
 let flippedCard: HTMLButtonElement[] = [];
 let activePlayer: string = "blue";
@@ -19,6 +19,7 @@ function init() {
     checkboxes("board");
     hoverPreview();
     openModal();
+    initBackToStart();
     currentPlayer();
 
     const fieldRef = document.getElementById("field");
@@ -45,7 +46,7 @@ function startMemory() {
     const player = document.querySelector<HTMLInputElement>(".choices__item--player:checked")!.id;
     const board = document.querySelector<HTMLInputElement>(".choices__item--board:checked")!.id;
 
-    resetScore();
+    resetGame();
     activePlayer = player.replace("player-", "");
     currentPlayer();
     gameStarted(theme, player, board)
@@ -58,6 +59,7 @@ function startMemory() {
 
 function gameStarted(theme: string, player: string, board: string) {
     const cards = cardsByTheme[theme];
+    const cardBack = cardBackByTheme[theme];
     const cardCount = Number(board.replace("board-size-", ""));
     const pairCount = cardCount / 2;
     const selectedCards = cards.slice(0, pairCount);
@@ -115,6 +117,8 @@ function gameStarted(theme: string, player: string, board: string) {
 
     const cardsGrid = document.getElementById("cards");
     if (cardsGrid) {
+        cardsGrid.classList.remove("cards--theme-code-vibes", "cards--theme-gaming");
+        cardsGrid.classList.add(`cards--${theme}`);
         cardsGrid.style.gridTemplateColumns = `repeat(${columns}, 1fr)`;
     }
 }
@@ -247,7 +251,6 @@ function openModal() {
     const btn = document.getElementById("exit-btn")
     const back = document.querySelector(".modal__back");
     const exit = document.querySelector(".modal__exit");
-    const settingsRef = document.getElementById("settings");
 
     btn?.addEventListener("click", () => {
         modal?.classList.remove("d_none", "modal--closing");
@@ -269,9 +272,38 @@ function openModal() {
         closeModal(modal);
         memoryRef?.classList.add("d_none");
         settingsRef?.classList.remove("d_none");
-        flippedCard = [];
-        resetScore();
+        resetGame();
     });
+}
+
+function initBackToStart() {
+    document.addEventListener("click", (event) => {
+        const backToStartBtn = (event.target as HTMLElement).closest(".back-to-start");
+        if (!backToStartBtn) return;
+
+        backToStart();
+    });
+}
+
+function backToStart() {
+    resetGame();
+
+    const memoryRef = document.getElementById("memory");
+    const settingsRef = document.getElementById("settings");
+
+    memoryRef?.classList.add("d_none");
+    settingsRef?.classList.remove("d_none");
+}
+
+function resetGame() {
+    flippedCard = [];
+    resetScore();
+
+    const endScreenRef = document.getElementById("end-screen");
+    const winnerRef = document.getElementById("winner");
+
+    endScreenRef?.classList.remove("end-screen--open");
+    winnerRef?.classList.remove("winner--open");
 }
 
 function closeModal(modal: HTMLElement) {
@@ -322,18 +354,15 @@ function resetScore() {
 }
 
 function cardsCounter(cardCount: number) {
-
     const matchedCards = document.querySelectorAll(".card.is-matched").length;
     if (matchedCards === cardCount) {
         if (blueScore > orangeScore) {
             blueWins();
         }
         if (blueScore < orangeScore) {
-            gameOverScreen();
             orangeWins()
         }
         if (blueScore === orangeScore) {
-            gameOverScreen();
             draw()
         }
     }
@@ -341,8 +370,41 @@ function cardsCounter(cardCount: number) {
 
 function blueWins() {
     gameOverScreen();
-    const endScreenRef = document.getElementById("final-score");
+    const winnerInnerRef = document.getElementById("winner__inner");
+    winnerInnerRef!.innerHTML =
+        `<span class="winner__is">The winner is</span>
+                <span class="winner__blue--text">BLUE PlAYER</span>
+                <img class="winner__img" src="assets/icons/blue win.svg" alt="">
+                <button class="back-to-start exit__button">
+                    <span>Back to start</span>
+                </button>
+        `;
+}
 
+function orangeWins() {
+    gameOverScreen();
+    const winnerInnerRef = document.getElementById("winner__inner");
+    winnerInnerRef!.innerHTML =
+        `<span class="winner__is">The winner is</span>
+                <span class="winner__draw--text">ORANGE PlAYER</span>
+                <img class="winner__img" src="assets/icons/orange win.svg" alt="">
+                <button class="back-to-start exit__button">
+                    <span>Back to start</span>
+                </button>
+        `;
+}
+
+function draw() {
+    gameOverScreen();
+    const winnerInnerRef = document.getElementById("winner__inner");
+    winnerInnerRef!.innerHTML =
+    `<span class="winner__is">It's a</span>
+                <span class="end-title">DRAW</span>
+                <img class="winner__img" src="assets/icons/draw.svg" alt="">
+                <button class="back-to-start exit__button">
+                    <span>Back to start</span>
+                </button>
+        `;
 }
 
 function gameOverScreen() {
@@ -356,9 +418,10 @@ function gameOverScreen() {
 
     setTimeout(() => {
         winnerScreen();
-    }, 3000);
+    }, 1500);
 }
 
 function winnerScreen() {
-    
+    const winnerRef = document.getElementById("winner");
+    winnerRef?.classList.add("winner--open");
 }
