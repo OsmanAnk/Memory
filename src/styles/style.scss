@@ -560,7 +560,7 @@ body {
     &__face {
         position: absolute;
         inset: 0;
-        background-color: black;
+        // background-color: #F6F1F3;
         backface-visibility: hidden;
         overflow: hidden;
 
@@ -573,7 +573,7 @@ body {
 
         &--back {
             transform: rotateY(180deg);
-            background-color: red;
+            background-color: #F6F1F3;
         }
 
     }
@@ -581,16 +581,6 @@ body {
     &.is-flipped .card__inner {
         transform: rotateY(180deg);
     }
-}
-
-.cards--theme-code-vibes .card {
-    width: 184px;
-    height: 184px;
-}
-
-.cards--theme-gaming .card {
-    width: 161px;
-    height: 184px;
 }
 
 .card.is-matched .card__face--back::after {

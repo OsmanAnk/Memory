@@ -1,0 +1,47 @@
+.memory--theme-gaming {
+    background: #294F60;
+    box-sizing: border-box;
+    padding-top: 24px;
+
+    .cards--theme-gaming .card {
+        width: 161px;
+        height: 184px;
+
+        .card__face {
+            border-radius: 12px;
+        }
+
+        .card__face:not(.card__face--back) {
+            background: linear-gradient(147.13deg, #ED1B76 1.28%, #0A2835 142.53%);
+        }
+
+        .card__face--back {
+            box-sizing: border-box;
+            padding: 18px;
+            box-shadow: 6px 6px 12px 0px #00000040;
+
+            img {
+                object-fit: contain;
+            }
+        }
+    }
+
+    .memory__header {
+        background: #FD96C933;
+        box-sizing: border-box;
+        padding: 24px;
+        border-radius: 10px;
+    }
+
+    .memory__main {
+        // Gaming board styles here.
+    }
+}
+
+.end-screen--theme-gaming {
+    // Gaming game-over styles here.
+}
+
+.winner--theme-gaming {
+    // Gaming winner styles here.
+}

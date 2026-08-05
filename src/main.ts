@@ -1,4 +1,6 @@
 import './styles/style.scss'
+import './styles/themes/_code-vibes.scss'
+import './styles/themes/_gaming.scss'
 import { cardBackByTheme, cardsByTheme } from './cards'
 
 let flippedCard: HTMLButtonElement[] = [];
@@ -49,6 +51,7 @@ function startMemory() {
     resetGame();
     activePlayer = player.replace("player-", "");
     currentPlayer();
+    applyGameTheme(theme);
     gameStarted(theme, player, board)
 
     const settingsRef = document.getElementById("settings");
@@ -121,6 +124,24 @@ function gameStarted(theme: string, player: string, board: string) {
         cardsGrid.classList.add(`cards--${theme}`);
         cardsGrid.style.gridTemplateColumns = `repeat(${columns}, 1fr)`;
     }
+}
+
+function applyGameTheme(theme: string) {
+    const sections = [
+        { element: document.getElementById("memory"), baseClass: "memory" },
+        { element: document.getElementById("end-screen"), baseClass: "end-screen" },
+        { element: document.getElementById("winner"), baseClass: "winner" },
+    ];
+
+    sections.forEach(({ element, baseClass }) => {
+        if (!element) return;
+
+        element.classList.remove(
+            `${baseClass}--theme-code-vibes`,
+            `${baseClass}--theme-gaming`
+        );
+        element.classList.add(`${baseClass}--${theme}`);
+    });
 }
 
 function shuffleCards(doubleSelectedCards: string[]) {
