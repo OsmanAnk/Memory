@@ -4,7 +4,7 @@ Memory Game is a browser-based card matching game built with TypeScript and SCSS
 
 ## Live Demo
 
-[Open live demo](https://osman-annak.developerakademie.net/projects/memory/)
+[Open live demo](http://osman-annak.developerakademie.net/modul-14/Memory/index.html)
 
 ## Features
 
