@@ -4,98 +4,99 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image" href="./assets/icons/code_vibes/code vibes back.svg">
+    <link rel="icon" type="image/svg+xml" href="%BASE_URL%favicon.svg">
     <title>Memory</title>
 </head>
 
 <body>
-    <section class="home" id="home">
-        <div class="home__intro">
-            <h2 class="home__h2">It's play time.</h2>
-            <h1 class="home__h1">Ready to play?</h1>
-        </div>
+    <main>
+        <section class="home" id="home">
+            <div class="home__intro">
+                <h2 class="home__h2">It's play time.</h2>
+                <h1 class="home__h1">Ready to play?</h1>
+            </div>
 
-        <button class="play" id="play">
-            <img class="play__icon" src="assets/icons/stadia_controller_icon.svg" alt="">
-            <p class="play__p">Play</p>
-            <span class="play__arrow" aria-hidden="true"></span>
-        </button>
+            <button class="play" id="play" type="button">
+                <img class="play__icon" src="assets/icons/stadia_controller_icon.svg" alt="">
+                <span class="play__p">Play</span>
+                <span class="play__arrow" aria-hidden="true"></span>
+            </button>
 
-        <img class="controller" src="assets/img/stadia_controller.svg" alt="">
-    </section>
+            <img class="controller" src="assets/img/stadia_controller.svg" alt="">
+        </section>
 
-    <section class="settings d_none" id="settings">
-        <div class="settings__main">
-            <div class="settings__left">
-                <div class="headline">
-                    <h1 class="headline__h1">Settings</h1>
-                    <img class="headline__underline" src="assets/icons/Line 3.svg" alt="">
-                </div>
-                <div class="options">
-                    <div class="option option--themes">
-                        <div class="option__head">
-                            <img class="option__icon" src="assets/icons/palette.svg" alt="">
-                            <span class="option__title">Game themes</span>
-                        </div>
+        <form class="settings d_none" id="settings">
+            <div class="settings__main">
+                <div class="settings__left">
+                    <header class="headline">
+                        <h1 class="headline__h1">Settings</h1>
+                        <img class="headline__underline" src="assets/icons/Line 3.svg" alt="">
+                    </header>
+                    <div class="options">
+                        <fieldset class="option option--themes">
+                            <legend class="option__head">
+                                <img class="option__icon" src="assets/icons/palette.svg" alt="">
+                                <span class="option__title">Game themes</span>
+                            </legend>
                         <div class="choices">
                             <label class="choices__label">
-                                <input class="choices__item choices__item--theme" type="checkbox" name="theme"
+                                <input class="choices__item choices__item--theme" type="radio" name="theme"
                                     id="theme-code-vibes" checked>
                                 <span class="choices__text">Code vibes theme</span>
                             </label>
                             <label class="choices__label">
-                                <input class="choices__item choices__item--theme" type="checkbox" name="theme"
+                                <input class="choices__item choices__item--theme" type="radio" name="theme"
                                     id="theme-gaming">
                                 <span class="choices__text">Gaming theme</span>
                             </label>
                         </div>
-                    </div>
-                    <div class="option option--players">
-                        <div class="option__head">
+                        </fieldset>
+                        <fieldset class="option option--players">
+                            <legend class="option__head">
                             <img class="option__icon" src="assets/icons/chess_pawn.svg" alt="">
                             <span class="option__title">Choose player</span>
-                        </div>
+                            </legend>
                         <div class="choices">
                             <label class="choices__label">
-                                <input class="choices__item choices__item--player" type="checkbox" name="player"
+                                <input class="choices__item choices__item--player" type="radio" name="player"
                                     id="player-blue">
                                 <span class="choices__text">Blue</span>
                             </label>
                             <label class="choices__label">
-                                <input class="choices__item choices__item--player" type="checkbox" name="player"
+                                <input class="choices__item choices__item--player" type="radio" name="player"
                                     id="player-orange">
                                 <span class="choices__text">Orange</span>
                             </label>
                         </div>
-                    </div>
-                    <div class="option option--board">
-                        <div class="option__head">
+                        </fieldset>
+                        <fieldset class="option option--board">
+                            <legend class="option__head">
                             <img class="option__icon" src="assets/icons/style.svg" alt="">
                             <span class="option__title">Board size</span>
-                        </div>
+                            </legend>
                         <div class="choices">
                             <label class="choices__label">
-                                <input class="choices__item choices__item--board" type="checkbox" name="board-size"
+                                <input class="choices__item choices__item--board" type="radio" name="board-size"
                                     id="board-size-16">
                                 <span class="choices__text">16 cards</span>
                             </label>
                             <label class="choices__label">
-                                <input class="choices__item choices__item--board" type="checkbox" name="board-size"
+                                <input class="choices__item choices__item--board" type="radio" name="board-size"
                                     id="board-size-24">
                                 <span class="choices__text">24 cards</span>
                             </label>
                             <label class="choices__label">
-                                <input class="choices__item choices__item--board" type="checkbox" name="board-size"
+                                <input class="choices__item choices__item--board" type="radio" name="board-size"
                                     id="board-size-36">
                                 <span class="choices__text">36 cards</span>
                             </label>
                         </div>
 
+                        </fieldset>
                     </div>
                 </div>
-            </div>
-            <div class="settings__right">
-                <div class="preview">
+                <aside class="settings__right">
+                    <section class="preview" aria-label="Theme preview">
                     <div class="preview__image">
                         <img id="preview-code-vibes" class="preview__img" src="assets/img/IT logos.svg" alt="">
                         <img id="preview-gaming" class="preview__img d_none" src="assets/img/gameing.svg" alt="">
@@ -103,8 +104,8 @@
                             alt="">
                         <img id="preview-foods" class="preview__img d_none" src="assets/img/foods.svg" alt="">
                     </div>
-                </div>
-                <div class="chosen">
+                    </section>
+                    <section class="chosen" aria-label="Selected settings">
                     <span class="chosen__theme" id="chosen__theme">Code vibes theme</span>
                     <img class="chosen__line" src="assets/icons/Line 6.svg" alt="">
                     <img class="chosen__line-3 d_none" src="assets/icons/Line 3 short.svg" alt="">
@@ -112,89 +113,90 @@
                     <img class="chosen__line" src="assets/icons/Line 6.svg" alt="">
                     <img class="chosen__line-3 d_none" src="assets/icons/Line 3 short.svg" alt="">
                     <span class="chosen__board" id="chosen__board">Board size</span>
-                    <button class="chosen__button play" id="start" disabled>
+                    <button class="chosen__button play" id="start" type="button" disabled>
                         <img class="play__icon" src="assets/icons/smart_display.svg" alt="">
-                        <p class="play__p">Start</p>
+                        <span class="play__p">Start</span>
                     </button>
-                </div>
+                    </section>
+                </aside>
             </div>
-        </div>
 
-    </section>
+        </form>
 
-    <section class="memory d_none" id="memory">
-        <header class="memory__header">
-            <div class="players">
-                <div class="players__blue">
+        <section class="memory d_none" id="memory">
+            <header class="memory__header">
+                <ul class="players">
+                    <li class="players__blue">
                     <img class="" id="player-blue-icon" src="assets/icons/code_vibes/player blue.svg" alt="">
                     <span class="players__name">Blue</span>
-                    <div id="players__blue--score" class="players__blue--score">
+                        <output id="players__blue--score" class="players__blue--score">
                         0
-                    </div>
-                </div>
-                <div class="players__orange">
+                        </output>
+                    </li>
+                    <li class="players__orange">
                     <img class="" id="player-orange-icon" src="assets/icons/code_vibes/player orange.svg" alt="">
                     <span class="players__name">Orange</span>
-                    <div id="players__orange--score" class="players__orange--score">
+                        <output id="players__orange--score" class="players__orange--score">
                         0
-                    </div>
-                </div>
-            </div>
-            <div class="current-player" id="current-player">
+                        </output>
+                    </li>
+                </ul>
+                <p class="current-player" id="current-player">
                 <span>Current player: </span>
                 <img id="current-player-icon" src="assets/icons/code_vibes/player blue.svg" alt="">
-            </div>
-            <div class="exit">
-                <button class="exit__button" id="exit-btn">
+                </p>
+                <nav class="exit" aria-label="Game actions">
+                    <button class="exit__button" id="exit-btn" type="button">
                     <img src="assets/icons/exit.svg" alt="">
                     <span>Exit game</span>
-                </button>
+                    </button>
+                </nav>
+            </header>
+            <div class="memory__main">
+                <ul class="cards" id="cards">
+                </ul>
             </div>
-        </header>
-        <div class="memory__main">
-            <div class="cards" id="cards">
-            </div>
-        </div>
-    </section>
-    <section class="end-screen" id="end-screen">
-        <div class="game-over" id="game-over">
+        </section>
+        <section class="end-screen" id="end-screen">
+            <article class="game-over" id="game-over">
             <span class="end-title">Game over</span>
-            <div class="final-score" id="final-score">
+                <section class="final-score" id="final-score" aria-label="Final score">
                 <p class="final-score__title">Final score</p>
-                <div class="players final-score__players">
-                    <div class="players__blue">
+                    <ul class="players final-score__players">
+                        <li class="players__blue">
                         <img id="final-blue-icon" src="assets/icons/code_vibes/player blue.svg" alt="">
                         <span class="players__name">Blue</span>
-                        <div id="final-blue-score" class="players__blue--score">0</div>
-                    </div>
-                    <div class="players__orange">
+                            <output id="final-blue-score" class="players__blue--score">0</output>
+                        </li>
+                        <li class="players__orange">
                         <img id="final-orange-icon" src="assets/icons/code_vibes/player orange.svg" alt="">
                         <span class="players__name">Orange</span>
-                        <div id="final-orange-score" class="players__orange--score">0</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    <section class="winner" id="winner">
-        <div class="winner__screen">
+                            <output id="final-orange-score" class="players__orange--score">0</output>
+                        </li>
+                    </ul>
+                </section>
+            </article>
+        </section>
+        <section class="winner" id="winner">
+            <article class="winner__screen">
             <picture>
                 <source media="(min-width: 1440px)" srcset="assets/img/Confetti-wide.svg">
                 <img src="assets/img/Confetti.svg" alt="">
             </picture>
             <div class="winner__inner" id="winner__inner">
             </div>
-        </div>
-    </section>
-    <div class="modal d_none" id="modal">
+            </article>
+        </section>
+    </main>
+    <aside class="modal d_none" id="modal" role="dialog" aria-modal="true">
         <div class="modal__content">
             <span class="modal__text">Are you sure you want to quit<br> the game?</span>
             <div class="modal__btns">
-                <button class="modal__back">Back to game</button>
-                <button class="modal__exit">Exit game</button>
+                <button class="modal__back" type="button">Back to game</button>
+                <button class="modal__exit" type="button">Exit game</button>
             </div>
         </div>
-    </div>
+    </aside>
     <script type="module" src="/src/main.ts"></script>
 </body>
 

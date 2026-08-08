@@ -1,18 +1,22 @@
+/** Maps a theme id to the matching card image paths. */
 interface CardsByTheme {
     [theme: string]: string[];
 }
 
+/** Maps a theme id to the matching card back image path. */
 interface CardBackByTheme {
     [theme: string]: string;
 }
 
 const base = import.meta.env.BASE_URL;
 
+/** Card back images used for the currently selected theme. */
 export const cardBackByTheme: CardBackByTheme = {
     "theme-code-vibes": `${base}assets/icons/code_vibes/code vibes back.svg`,
     "theme-gaming": `${base}assets/icons/gaming/Back.svg`,
 };
 
+/** Front card images grouped by theme. Each selected image is duplicated for a matching pair. */
 export const cardsByTheme: CardsByTheme = {
     "theme-code-vibes": [
         `${base}assets/icons/code_vibes/code vibe angular.svg`,
