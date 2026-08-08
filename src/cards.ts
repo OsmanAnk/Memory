@@ -41,7 +41,7 @@ export const cardsByTheme: CardsByTheme = {
         `${base}assets/icons/gaming/Coin.svg`,
         `${base}assets/icons/gaming/Controller.svg`,
         `${base}assets/icons/gaming/Gameboy.svg`,
-        `${base}assets/icons/gaming/Käse.svg`,
+        `${base}assets/icons/gaming/Kaese.svg`,
         `${base}assets/icons/gaming/Labyrinth.svg`,
         `${base}assets/icons/gaming/Level up.svg`,
         `${base}assets/icons/gaming/Mario.svg`,
@@ -52,6 +52,6 @@ export const cardsByTheme: CardsByTheme = {
         `${base}assets/icons/gaming/Rectangle.svg`,
         `${base}assets/icons/gaming/Snake.svg`,
         `${base}assets/icons/gaming/Triangle.svg`,
-        `${base}assets/icons/gaming/Würfel.svg`,
+        `${base}assets/icons/gaming/Wuerfel.svg`,
     ],
 };

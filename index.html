@@ -8,7 +8,7 @@
 </head>
 
 <body>
-    <section class="home d_none" id="home">
+    <section class="home" id="home">
         <div class="home__intro">
             <h2 class="home__h2">It's play time.</h2>
             <h1 class="home__h1">Ready to play?</h1>
@@ -23,7 +23,7 @@
         <img class="controller" src="assets/img/stadia_controller.svg" alt="">
     </section>
 
-    <section class="settings" id="settings">
+    <section class="settings d_none" id="settings">
         <div class="settings__main">
             <div class="settings__left">
                 <div class="headline">
@@ -47,16 +47,6 @@
                                     id="theme-gaming">
                                 <span class="choices__text">Gaming theme</span>
                             </label>
-                            <!-- <label class="choices__label">
-                                <input class="choices__item choices__item--theme" type="checkbox" name="theme"
-                                    id="theme-da-projects">
-                                <span class="choices__text">DA Projects theme</span>
-                            </label>
-                            <label class="choices__label">
-                                <input class="choices__item choices__item--theme" type="checkbox" name="theme"
-                                    id="theme-foods">
-                                <span class="choices__text">Foods theme</span>
-                            </label> -->
                         </div>
                     </div>
                     <div class="option option--players">
@@ -83,11 +73,6 @@
                             <span class="option__title">Board size</span>
                         </div>
                         <div class="choices">
-                            <label class="choices__label">
-                                <input class="choices__item choices__item--board" type="checkbox" name="board-size"
-                                    id="board-size-4">
-                                <span class="choices__text">4 cards</span>
-                            </label>
                             <label class="choices__label">
                                 <input class="choices__item choices__item--board" type="checkbox" name="board-size"
                                     id="board-size-16">
@@ -136,23 +121,19 @@
 
     </section>
 
-    <section class="memory" id="memory">
+    <section class="memory d_none" id="memory">
         <header class="memory__header">
             <div class="players">
                 <div class="players__blue">
-                    <img class="" src="assets/icons/code_vibes/player blue.svg" alt="">
-                    <span class="">
-                        Blue
-                    </span>
+                    <img class="" id="player-blue-icon" src="assets/icons/code_vibes/player blue.svg" alt="">
+                    <span class="players__name">Blue</span>
                     <div id="players__blue--score" class="players__blue--score">
                         0
                     </div>
                 </div>
                 <div class="players__orange">
-                    <img class="" src="assets/icons/code_vibes/player orange.svg" alt="">
-                    <span class="">
-                        Orange
-                    </span>
+                    <img class="" id="player-orange-icon" src="assets/icons/code_vibes/player orange.svg" alt="">
+                    <span class="players__name">Orange</span>
                     <div id="players__orange--score" class="players__orange--score">
                         0
                     </div>
@@ -164,7 +145,7 @@
             </div>
             <div class="exit">
                 <button class="exit__button" id="exit-btn">
-                    <img src="assets/icons/code_vibes/exit.svg" alt="">
+                    <img src="assets/icons/exit.svg" alt="">
                     <span>Exit game</span>
                 </button>
             </div>
@@ -181,13 +162,13 @@
                 <p class="final-score__title">Final score</p>
                 <div class="players final-score__players">
                     <div class="players__blue">
-                        <img src="assets/icons/code_vibes/player blue.svg" alt="">
-                        <span>Blue</span>
+                        <img id="final-blue-icon" src="assets/icons/code_vibes/player blue.svg" alt="">
+                        <span class="players__name">Blue</span>
                         <div id="final-blue-score" class="players__blue--score">0</div>
                     </div>
                     <div class="players__orange">
-                        <img src="assets/icons/code_vibes/player orange.svg" alt="">
-                        <span>Orange</span>
+                        <img id="final-orange-icon" src="assets/icons/code_vibes/player orange.svg" alt="">
+                        <span class="players__name">Orange</span>
                         <div id="final-orange-score" class="players__orange--score">0</div>
                     </div>
                 </div>
@@ -196,7 +177,10 @@
     </section>
     <section class="winner" id="winner">
         <div class="winner__screen">
-            <img class="" src="assets/img/Confetti.svg" alt="">
+            <picture>
+                <source media="(min-width: 1440px)" srcset="assets/img/Confetti-wide.svg">
+                <img src="assets/img/Confetti.svg" alt="">
+            </picture>
             <div class="winner__inner" id="winner__inner">
             </div>
         </div>

@@ -8,6 +8,11 @@
     src: url('/assets/fonts/RedRose-VariableFont_wght.ttf') format('truetype');
 }
 
+@font-face {
+    font-family: 'Orbitron';
+    src: url('/assets/fonts/Orbitron-VariableFont_wght.ttf') format('truetype');
+}
+
 @mixin flex-center {
     display: flex;
     align-items: center;
@@ -133,12 +138,13 @@ body {
 
 .settings {
     margin: 0;
-    height: 100vh;
+    min-height: 100vh;
     @include flex-center;
 }
 
 .memory {
     background-color: #303131;
+    box-sizing: border-box;
     min-height: 100vh;
 }
 
@@ -438,17 +444,17 @@ body {
 
 .memory {
     margin: 0;
-}
 
-.memory__header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    color: white;
-    width: min(1440px, calc(100% - 48px));
-    max-width: 1440px;
-    margin-inline: auto;
-    padding: 48px;
+    &__header {
+        box-sizing: border-box;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        color: white;
+        width: min(1440px, calc(100% - 48px));
+        margin-inline: auto;
+        padding: 48px;
+    }
 }
 
 .players {
@@ -536,7 +542,7 @@ body {
 
 .cards {
     display: grid;
-    gap: 12px;
+    gap: 10px;
 }
 
 .card {
@@ -775,10 +781,31 @@ body {
         transform: translateY(0);
     }
 
+    &__screen {
+        @include flex-center;
+        position: relative;
+        width: 100%;
+        min-height: 100vh;
+    }
+
+    &__screen>picture {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+    }
+
+    &__screen>picture img {
+        display: block;
+        width: 100%;
+    }
+
     &__inner {
         @include flex-center;
         flex-direction: column;
         gap: 32px;
+        position: relative;
+        z-index: 1;
     }
 
     &__is {

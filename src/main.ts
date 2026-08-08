@@ -1,349 +1,385 @@
-import './styles/style.scss'
-import './styles/themes/_code-vibes.scss'
-import './styles/themes/_gaming.scss'
-import { cardBackByTheme, cardsByTheme } from './cards'
+import './styles/style.scss';
+import './styles/themes/_code-vibes.scss';
+import './styles/themes/_gaming.scss';
+import { cardBackByTheme, cardsByTheme } from './cards';
 
 let flippedCard: HTMLButtonElement[] = [];
+let activeTheme: string = "theme-code-vibes";
 let activePlayer: string = "blue";
+let activeCardCount: number = 0;
 let blueScore: number = 0;
 let orangeScore: number = 0;
 
-init()
+init();
 
 function init() {
-    const playRef = document.getElementById("play")
-    playRef?.addEventListener("click", startGame);
-    const startRef = document.getElementById("start")
-    startRef?.addEventListener("click", startMemory);
-
+    bindClick("play", startGame);
+    bindClick("start", startMemory);
     checkboxes("theme");
     checkboxes("player");
     checkboxes("board");
     hoverPreview();
     openModal();
     initBackToStart();
+    initCardsClick();
     currentPlayer();
+}
 
-    const fieldRef = document.getElementById("field");
-    if (fieldRef) {
-        fieldRef.addEventListener("click", e => {
-            const card = (e.target as HTMLElement).closest(".card") as HTMLButtonElement;
-            if (card) {
-                card.classList.toggle("is-flipped");
-            }
-        })
-    }
+function bindClick(id: string, callback: () => void) {
+    document.getElementById(id)?.addEventListener("click", callback);
 }
 
 function startGame() {
-    const homeRef = document.getElementById("home");
-    homeRef?.classList.add("d_none");
-
-    const settingsRef = document.getElementById("settings");
-    settingsRef?.classList.remove("d_none");
+    hideElement("home");
+    showElement("settings");
 }
 
 function startMemory() {
-    const theme = document.querySelector<HTMLInputElement>(".choices__item--theme:checked")!.id;
-    const player = document.querySelector<HTMLInputElement>(".choices__item--player:checked")!.id;
-    const board = document.querySelector<HTMLInputElement>(".choices__item--board:checked")!.id;
-
+    const theme = getCheckedId("theme");
+    const player = getCheckedId("player");
+    const board = getCheckedId("board");
     resetGame();
-    activePlayer = player.replace("player-", "");
-    currentPlayer();
-    applyGameTheme(theme);
-    gameStarted(theme, player, board)
-
-    const settingsRef = document.getElementById("settings");
-    const memoryRef = document.getElementById("memory");
-    settingsRef?.classList.add("d_none");
-    memoryRef?.classList.remove("d_none");
+    setActiveOptions(theme, player);
+    gameStarted(theme, board);
+    hideElement("settings");
+    showElement("memory");
 }
 
-function gameStarted(theme: string, player: string, board: string) {
-    const cards = cardsByTheme[theme];
-    const cardBack = cardBackByTheme[theme];
+function getCheckedId(option: string) {
+    const selector = `.choices__item--${option}:checked`;
+    return document.querySelector<HTMLInputElement>(selector)!.id;
+}
+
+function setActiveOptions(theme: string, player: string) {
+    activeTheme = theme;
+    activePlayer = player.replace("player-", "");
+    applyGameTheme(theme);
+    updatePlayerImages(theme);
+    currentPlayer();
+}
+
+function gameStarted(theme: string, board: string) {
     const cardCount = Number(board.replace("board-size-", ""));
+    const cards = createGameCards(theme, cardCount);
+    activeCardCount = cardCount;
+    renderCards(cards, cardBackByTheme[theme]);
+    updateBoardClasses(cardCount);
+    updateCardsGrid(theme, cardCount);
+}
+
+function createGameCards(theme: string, cardCount: number) {
     const pairCount = cardCount / 2;
-    const selectedCards = cards.slice(0, pairCount);
-    const doubleSelectedCards = selectedCards.concat(selectedCards);
-    shuffleCards(doubleSelectedCards)
+    const selectedCards = cardsByTheme[theme].slice(0, pairCount);
+    const gameCards = selectedCards.concat(selectedCards);
+    shuffleCards(gameCards);
+    return gameCards;
+}
+
+function renderCards(cards: string[], cardBack: string) {
     const cardsRef = document.getElementById("cards");
-    const cardsHtml = doubleSelectedCards.map(card => {
-        return `<button class="card" data-card="${card}">
-                    <div class="card__inner">
-                        <div class="card__face">
-                            <img src="${cardBack}" alt="">
-                        </div>
-                        <div class="card__face card__face--back">
-                            <img src="${card}" alt="">
-                        </div>
-                    </div>
-                </button>`;
-    }).join("");
+    if (!cardsRef) return;
+    cardsRef.innerHTML = cards.map(card => cardTemplate(card, cardBack)).join("");
+}
 
-    cardsRef?.addEventListener("click", (event) => {
-        const card = (event.target as HTMLElement).closest(".card");
-        if (!card) return;
-        if (card.classList.contains("is-flipped")) return;
-        if (flippedCard.length === 2) return;
+function cardTemplate(card: string, cardBack: string) {
+    return `<button class="card" data-card="${card}">
+        <div class="card__inner">${cardFace(cardBack)}${cardBackFace(card)}</div>
+    </button>`;
+}
 
-        card.classList.add("is-flipped");
-        flippedCard.push(card as HTMLButtonElement)
+function cardFace(src: string) {
+    return `<div class="card__face"><img src="${src}" alt=""></div>`;
+}
 
-        if (flippedCard.length === 2) {
-            if (flippedCard[0].dataset.card === flippedCard[1].dataset.card) {
-                setTimeout(() => {
-                    flippedCard[0].classList.add("is-matched");
-                    flippedCard[1].classList.add("is-matched");
-                    flippedCard = [];
-                    score();
-                    cardsCounter(cardCount);
-                    //hier vergleich, wie viele karten noch im spiel übrig sind
-                }, 300);
-            } else {
-                setTimeout(() => {
-                    flippedCard[0].classList.remove("is-flipped");
-                    flippedCard[1].classList.remove("is-flipped");
-                    flippedCard = [];
-                    switchPlayer();
-                    currentPlayer();
-                }, 1000);
-            }
-        }
-    });
+function cardBackFace(src: string) {
+    return `<div class="card__face card__face--back"><img src="${src}" alt=""></div>`;
+}
 
-    cardsRef!.innerHTML = cardsHtml;
+function initCardsClick() {
+    document.getElementById("cards")?.addEventListener("click", handleCardsClick);
+}
 
-
-    const columns = cardCount === 4 ? 2 : cardCount === 16 ? 4 : 6;
-
-    const cardsGrid = document.getElementById("cards");
-    if (cardsGrid) {
-        cardsGrid.classList.remove("cards--theme-code-vibes", "cards--theme-gaming");
-        cardsGrid.classList.add(`cards--${theme}`);
-        cardsGrid.style.gridTemplateColumns = `repeat(${columns}, 1fr)`;
+function handleCardsClick(event: MouseEvent) {
+    const card = getClickedCard(event);
+    if (!card || cannotFlipCard(card)) return;
+    card.classList.add("is-flipped");
+    flippedCard.push(card);
+    if (flippedCard.length === 2) {
+        handleFlippedPair();
     }
+}
+
+function getClickedCard(event: MouseEvent) {
+    const target = event.target as HTMLElement;
+    return target.closest(".card") as HTMLButtonElement | null;
+}
+
+function cannotFlipCard(card: HTMLButtonElement) {
+    return card.classList.contains("is-flipped") || flippedCard.length === 2;
+}
+
+function handleFlippedPair() {
+    const [firstCard, secondCard] = flippedCard;
+    if (firstCard.dataset.card === secondCard.dataset.card) {
+        setTimeout(() => matchPair(firstCard, secondCard), 300);
+    } else {
+        setTimeout(() => resetPair(firstCard, secondCard), 1000);
+    }
+}
+
+function matchPair(firstCard: HTMLButtonElement, secondCard: HTMLButtonElement) {
+    firstCard.classList.add("is-matched");
+    secondCard.classList.add("is-matched");
+    flippedCard = [];
+    score();
+    cardsCounter();
+}
+
+function resetPair(firstCard: HTMLButtonElement, secondCard: HTMLButtonElement) {
+    firstCard.classList.remove("is-flipped");
+    secondCard.classList.remove("is-flipped");
+    flippedCard = [];
+    switchPlayer();
+    currentPlayer();
+}
+
+function updateBoardClasses(cardCount: number) {
+    const memoryRef = document.getElementById("memory");
+    memoryRef?.classList.remove("memory--board-4", "memory--board-16");
+    memoryRef?.classList.remove("memory--board-24", "memory--board-36");
+    memoryRef?.classList.add(`memory--board-${cardCount}`);
+}
+
+function updateCardsGrid(theme: string, cardCount: number) {
+    const cardsGrid = document.getElementById("cards");
+    if (!cardsGrid) return;
+    cardsGrid.classList.remove("cards--theme-code-vibes", "cards--theme-gaming");
+    cardsGrid.classList.add(`cards--${theme}`);
+    cardsGrid.style.gridTemplateColumns = `repeat(${getColumnCount(cardCount)}, 1fr)`;
+}
+
+function getColumnCount(cardCount: number) {
+    if (cardCount === 4) return 2;
+    if (cardCount === 16) return 4;
+    return 6;
 }
 
 function applyGameTheme(theme: string) {
-    const sections = [
-        { element: document.getElementById("memory"), baseClass: "memory" },
-        { element: document.getElementById("end-screen"), baseClass: "end-screen" },
-        { element: document.getElementById("winner"), baseClass: "winner" },
-    ];
-
-    sections.forEach(({ element, baseClass }) => {
-        if (!element) return;
-
-        element.classList.remove(
-            `${baseClass}--theme-code-vibes`,
-            `${baseClass}--theme-gaming`
-        );
-        element.classList.add(`${baseClass}--${theme}`);
-    });
+    applyThemeClass("memory", theme);
+    applyThemeClass("end-screen", theme);
+    applyThemeClass("winner", theme);
+    applyThemeClass("modal", theme);
 }
 
-function shuffleCards(doubleSelectedCards: string[]) {
-    for (let i = doubleSelectedCards.length - 1; i > 0; i--) {
-        let j = Math.floor(Math.random() * (i + 1));
-        let temp = doubleSelectedCards[i];
-        doubleSelectedCards[i] = doubleSelectedCards[j];
-        doubleSelectedCards[j] = temp;
+function applyThemeClass(id: string, theme: string) {
+    const element = document.getElementById(id);
+    if (!element) return;
+    element.classList.remove(`${id}--theme-code-vibes`, `${id}--theme-gaming`);
+    element.classList.add(`${id}--${theme}`);
+}
+
+function updatePlayerImages(theme: string) {
+    const blueIconSrc = getPlayerIconSrc(theme, "blue");
+    const orangeIconSrc = getPlayerIconSrc(theme, "orange");
+    setImgSrc("player-blue-icon", blueIconSrc);
+    setImgSrc("player-orange-icon", orangeIconSrc);
+    setImgSrc("final-blue-icon", blueIconSrc);
+    setImgSrc("final-orange-icon", orangeIconSrc);
+}
+
+function getPlayerIconSrc(theme: string, player: string) {
+    if (theme === "theme-gaming") {
+        return `assets/icons/chess_${player}.svg`;
+    }
+    return `assets/icons/code_vibes/player ${player}.svg`;
+}
+
+function setImgSrc(id: string, src: string) {
+    const imgRef = document.getElementById(id) as HTMLImageElement | null;
+    if (imgRef) imgRef.src = src;
+}
+
+function shuffleCards(cards: string[]) {
+    for (let i = cards.length - 1; i > 0; i--) {
+        swapCards(cards, i, Math.floor(Math.random() * (i + 1)));
     }
 }
 
-function checkboxes(option: string) {
-    const checkboxes = document.querySelectorAll<HTMLInputElement>(".choices__item--" + option);
-    checkboxes.forEach((box) => {
-        box.addEventListener("change", (e) => {
-            const currentCheckbox = e.target as HTMLInputElement;
+function swapCards(cards: string[], first: number, second: number) {
+    const temp = cards[first];
+    cards[first] = cards[second];
+    cards[second] = temp;
+}
 
-            checkedImg(currentCheckbox);
-            updateChosenText(option, currentCheckbox);
-            if (currentCheckbox.checked) {
-                checkboxes.forEach((other) => {
-                    if (other !== e.target) {
-                        other.checked = false;
-                        uncheckedImg(other);
-                    }
-                });
-            }
-            updateChosenState();
-        });
+function checkboxes(option: string) {
+    const boxes = document.querySelectorAll<HTMLInputElement>(`.choices__item--${option}`);
+    boxes.forEach(box => bindCheckbox(box, boxes, option));
+}
+
+function bindCheckbox(box: HTMLInputElement, boxes: NodeListOf<HTMLInputElement>, option: string) {
+    box.addEventListener("change", event => {
+        const currentCheckbox = event.target as HTMLInputElement;
+        checkedImg(currentCheckbox);
+        updateChosenText(option, currentCheckbox);
+        uncheckOtherBoxes(boxes, currentCheckbox);
+        updateChosenState();
+    });
+}
+
+function uncheckOtherBoxes(boxes: NodeListOf<HTMLInputElement>, current: HTMLInputElement) {
+    if (!current.checked) return;
+    boxes.forEach(other => {
+        if (other === current) return;
+        other.checked = false;
+        uncheckedImg(other);
     });
 }
 
 function updateChosenText(option: string, checkbox: HTMLInputElement) {
     const chosenTextRef = document.getElementById("chosen__" + option);
-    if (!chosenTextRef) return;
+    const text = getChoiceText(checkbox);
+    if (chosenTextRef && text) chosenTextRef.textContent = text;
+}
 
+function getChoiceText(checkbox: HTMLInputElement) {
     const label = checkbox.closest(".choices__label");
-    const text = label?.querySelector(".choices__text")?.textContent;
-    if (text) {
-        chosenTextRef.textContent = text;
-    }
+    return label?.querySelector(".choices__text")?.textContent;
 }
 
 function updateChosenState() {
-    const chosenRef = document.querySelector<HTMLElement>(".chosen");
-    const hasTheme = Boolean(document.querySelector<HTMLInputElement>(".choices__item--theme:checked"));
-    const hasPlayer = Boolean(document.querySelector<HTMLInputElement>(".choices__item--player:checked"));
-    const hasBoard = Boolean(document.querySelector<HTMLInputElement>(".choices__item--board:checked"));
-    const isComplete = hasTheme && hasPlayer && hasBoard;
+    const isComplete = hasCompleteChoices();
+    if (isComplete) document.querySelector(".chosen")?.classList.add("chosen--complete");
+    updateStartButton(isComplete);
+    updateChosenLines(isComplete);
+}
 
-    if (isComplete) {
-        chosenRef?.classList.add("chosen--complete");
-    }
+function hasCompleteChoices() {
+    return Boolean(getCheckedBox("theme") && getCheckedBox("player") && getCheckedBox("board"));
+}
 
+function getCheckedBox(option: string) {
+    return document.querySelector<HTMLInputElement>(`.choices__item--${option}:checked`);
+}
+
+function updateStartButton(isComplete: boolean) {
     const startRef = document.getElementById("start") as HTMLButtonElement | null;
-    if (startRef) {
-        startRef.disabled = !isComplete;
-    }
+    if (startRef) startRef.disabled = !isComplete;
+}
 
-    const lineRefs = document.querySelectorAll<HTMLElement>(".chosen__line")
-    const line3Refs = document.querySelectorAll<HTMLElement>(".chosen__line-3")
-
-    lineRefs.forEach((line) => {
-        if (isComplete) {
-            line.classList.add("d_none");
-        }
-    });
-    line3Refs.forEach(line3 => {
-        if (isComplete) {
-            line3.classList.remove("d_none");
-        }
-    });
+function updateChosenLines(isComplete: boolean) {
+    if (!isComplete) return;
+    hideAll(".chosen__line");
+    showAll(".chosen__line-3");
 }
 
 function checkedImg(currentCheckbox: HTMLInputElement) {
-    const themeName = currentCheckbox.id.replace("theme-", "")
-    const previewImg = document.getElementById("preview-" + themeName)
-
-    previewImg?.classList.remove("d_none");
+    getPreviewImg(currentCheckbox)?.classList.remove("d_none");
 }
 
 function uncheckedImg(other: HTMLInputElement) {
-    const themeName = other.id.replace("theme-", "")
-    const previewImg = document.getElementById("preview-" + themeName)
+    getPreviewImg(other)?.classList.add("d_none");
+}
 
-    previewImg?.classList.add("d_none");
+function getPreviewImg(checkbox: HTMLInputElement) {
+    const themeName = checkbox.id.replace("theme-", "");
+    return document.getElementById("preview-" + themeName);
 }
 
 function hoverPreview() {
-    const themeCheckboxes = document.querySelectorAll<HTMLInputElement>(".choices__item--theme");
-
-    themeCheckboxes.forEach((checkbox) => {
-        const label = checkbox.closest(".choices__label");
-
-        label?.addEventListener("mouseenter", () => {
-            showPreviewImg(checkbox);
-        });
-
-        leavePreview(label);
-    });
+    const themeBoxes = document.querySelectorAll<HTMLInputElement>(".choices__item--theme");
+    themeBoxes.forEach(bindPreviewEvents);
 }
 
-function leavePreview(label: Element | null) {
-    label?.addEventListener("mouseleave", () => {
-        const checkedTheme = document.querySelector<HTMLInputElement>(".choices__item--theme:checked");
+function bindPreviewEvents(checkbox: HTMLInputElement) {
+    const label = checkbox.closest(".choices__label");
+    label?.addEventListener("mouseenter", () => showPreviewImg(checkbox));
+    label?.addEventListener("mouseleave", showCheckedPreview);
+}
 
-        if (checkedTheme) {
-            showPreviewImg(checkedTheme);
-        }
-    });
+function showCheckedPreview() {
+    const checkedTheme = getCheckedBox("theme");
+    if (checkedTheme) showPreviewImg(checkedTheme);
 }
 
 function showPreviewImg(checkbox: HTMLInputElement) {
-    const previewImages = document.querySelectorAll<HTMLElement>(".preview__img");
-
-    previewImages.forEach((img) => {
-        img.classList.add("d_none");
-    });
-
-    const themeName = checkbox.id.replace("theme-", "");
-    const previewImg = document.getElementById("preview-" + themeName);
-
-    previewImg?.classList.remove("d_none");
+    hideAll(".preview__img");
+    getPreviewImg(checkbox)?.classList.remove("d_none");
 }
 
 function openModal() {
     const modal = document.getElementById("modal");
-    const btn = document.getElementById("exit-btn")
-    const back = document.querySelector(".modal__back");
-    const exit = document.querySelector(".modal__exit");
+    document.getElementById("exit-btn")?.addEventListener("click", () => showModal(modal));
+    document.querySelector(".modal__back")?.addEventListener("click", () => closeModalElement(modal));
+    document.querySelector(".modal__exit")?.addEventListener("click", () => exitGame(modal));
+}
 
-    btn?.addEventListener("click", () => {
-        modal?.classList.remove("d_none", "modal--closing");
-        modal?.classList.add("modal--open")
-    });
+function showModal(modal: HTMLElement | null) {
+    applyGameTheme(activeTheme);
+    modal?.classList.remove("d_none", "modal--closing");
+    modal?.classList.add("modal--open");
+}
 
-    back?.addEventListener("click", () => {
-        if (modal) {
-            closeModal(modal);
-        }
-    });
+function closeModalElement(modal: HTMLElement | null) {
+    if (modal) closeModal(modal);
+}
 
-    exit?.addEventListener("click", () => {
-        if (!modal) return;
-
-        const memoryRef = document.getElementById("memory");
-        const settingsRef = document.getElementById("settings");
-
-        closeModal(modal);
-        memoryRef?.classList.add("d_none");
-        settingsRef?.classList.remove("d_none");
-        resetGame();
-    });
+function exitGame(modal: HTMLElement | null) {
+    if (!modal) return;
+    closeModal(modal);
+    hideElement("memory");
+    showElement("settings");
+    resetGame();
 }
 
 function initBackToStart() {
-    document.addEventListener("click", (event) => {
-        const backToStartBtn = (event.target as HTMLElement).closest(".back-to-start");
-        if (!backToStartBtn) return;
-
-        backToStart();
+    document.addEventListener("click", event => {
+        if ((event.target as HTMLElement).closest(".back-to-start")) backToStart();
     });
 }
 
 function backToStart() {
     resetGame();
-
-    const memoryRef = document.getElementById("memory");
-    const settingsRef = document.getElementById("settings");
-
-    memoryRef?.classList.add("d_none");
-    settingsRef?.classList.remove("d_none");
+    hideElement("memory");
+    showElement("settings");
 }
 
 function resetGame() {
     flippedCard = [];
     resetScore();
+    hideEndScreens();
+}
 
-    const endScreenRef = document.getElementById("end-screen");
-    const winnerRef = document.getElementById("winner");
-
-    endScreenRef?.classList.remove("end-screen--open");
-    winnerRef?.classList.remove("winner--open");
+function hideEndScreens() {
+    document.getElementById("end-screen")?.classList.remove("end-screen--open");
+    document.getElementById("winner")?.classList.remove("winner--open");
 }
 
 function closeModal(modal: HTMLElement) {
-    if (!modal) return;
-
     modal.classList.remove("modal--open");
     modal.classList.add("modal--closing");
+    setTimeout(() => finishCloseModal(modal), 300);
+}
 
-    setTimeout(() => {
-        modal.classList.add("d_none");
-        modal.classList.remove("modal--closing");
-    }, 300);
+function finishCloseModal(modal: HTMLElement) {
+    modal.classList.add("d_none");
+    modal.classList.remove("modal--closing");
 }
 
 function currentPlayer() {
-    const currentPlayerIconRef = document.getElementById("current-player-icon") as HTMLImageElement | null;
+    const currentPlayerRef = document.getElementById("current-player");
+    currentPlayerRef?.classList.remove("current-player--blue", "current-player--orange");
+    currentPlayerRef?.classList.add(`current-player--${activePlayer}`);
+    setCurrentPlayerIcon();
+}
 
-    if (!currentPlayerIconRef) return;
-    currentPlayerIconRef.src = `assets/icons/code_vibes/player ${activePlayer}.svg`
+function setCurrentPlayerIcon() {
+    const iconSrc = getCurrentPlayerIconSrc();
+    setImgSrc("current-player-icon", iconSrc);
+}
+
+function getCurrentPlayerIconSrc() {
+    if (activeTheme === "theme-gaming") return "assets/icons/chess_neutral.svg";
+    return `assets/icons/code_vibes/player ${activePlayer}.svg`;
 }
 
 function switchPlayer() {
@@ -351,98 +387,101 @@ function switchPlayer() {
 }
 
 function score() {
-    let blueScoreRef = document.getElementById("players__blue--score");
-    let orangeScoreRef = document.getElementById("players__orange--score");
-
     if (activePlayer === "blue") {
         blueScore++;
-        blueScoreRef!.textContent = `${blueScore}`
     } else {
         orangeScore++;
-        orangeScoreRef!.textContent = `${orangeScore}`
     }
+    updateScoreText();
+}
+
+function updateScoreText() {
+    setText("players__blue--score", `${blueScore}`);
+    setText("players__orange--score", `${orangeScore}`);
 }
 
 function resetScore() {
     blueScore = 0;
     orangeScore = 0;
-
-    const blueScoreRef = document.getElementById("players__blue--score");
-    const orangeScoreRef = document.getElementById("players__orange--score");
-
-    if (blueScoreRef) blueScoreRef.textContent = "0";
-    if (orangeScoreRef) orangeScoreRef.textContent = "0";
+    updateScoreText();
 }
 
-function cardsCounter(cardCount: number) {
+function cardsCounter() {
     const matchedCards = document.querySelectorAll(".card.is-matched").length;
-    if (matchedCards === cardCount) {
-        if (blueScore > orangeScore) {
-            blueWins();
-        }
-        if (blueScore < orangeScore) {
-            orangeWins()
-        }
-        if (blueScore === orangeScore) {
-            draw()
-        }
-    }
+    if (matchedCards === activeCardCount) showWinner();
+}
+
+function showWinner() {
+    if (blueScore > orangeScore) blueWins();
+    if (blueScore < orangeScore) orangeWins();
+    if (blueScore === orangeScore) draw();
 }
 
 function blueWins() {
     gameOverScreen();
-    const winnerInnerRef = document.getElementById("winner__inner");
-    winnerInnerRef!.innerHTML =
-        `<span class="winner__is">The winner is</span>
-                <span class="winner__blue--text">BLUE PlAYER</span>
-                <img class="winner__img" src="assets/icons/blue win.svg" alt="">
-                <button class="back-to-start exit__button">
-                    <span>Back to start</span>
-                </button>
-        `;
+    setWinnerHtml("BLUE PLAYER", "winner__blue--text", getWinIcon("blue"));
 }
 
 function orangeWins() {
     gameOverScreen();
-    const winnerInnerRef = document.getElementById("winner__inner");
-    winnerInnerRef!.innerHTML =
-        `<span class="winner__is">The winner is</span>
-                <span class="winner__draw--text">ORANGE PlAYER</span>
-                <img class="winner__img" src="assets/icons/orange win.svg" alt="">
-                <button class="back-to-start exit__button">
-                    <span>Back to start</span>
-                </button>
-        `;
+    setWinnerHtml("ORANGE PLAYER", "winner__draw--text", getWinIcon("orange"));
 }
 
 function draw() {
     gameOverScreen();
+    setWinnerHtml("DRAW", "end-title", getDrawIcon(), "It's a");
+}
+
+function getWinIcon(player: string) {
+    if (activeTheme === "theme-gaming") return "assets/icons/pokal.svg";
+    return `assets/icons/${player} win.svg`;
+}
+
+function getDrawIcon() {
+    if (activeTheme === "theme-gaming") return "assets/icons/draw_gaming.svg";
+    return "assets/icons/draw_code_vibes.svg";
+}
+
+function setWinnerHtml(text: string, textClass: string, icon: string, prefix = "The winner is") {
     const winnerInnerRef = document.getElementById("winner__inner");
-    winnerInnerRef!.innerHTML =
-    `<span class="winner__is">It's a</span>
-                <span class="end-title">DRAW</span>
-                <img class="winner__img" src="assets/icons/draw.svg" alt="">
-                <button class="back-to-start exit__button">
-                    <span>Back to start</span>
-                </button>
-        `;
+    winnerInnerRef!.innerHTML = winnerTemplate(text, textClass, icon, prefix);
+}
+
+function winnerTemplate(text: string, textClass: string, icon: string, prefix: string) {
+    return `<span class="winner__is">${prefix}</span>
+        <span class="${textClass}">${text}</span>
+        <img class="winner__img" src="${icon}" alt="">
+        <button class="back-to-start exit__button"><span>Home</span></button>`;
 }
 
 function gameOverScreen() {
-    const endScreenRef = document.getElementById("end-screen");
-    const blueScoreRef = document.getElementById("final-blue-score");
-    const orangeScoreRef = document.getElementById("final-orange-score");
-
-    blueScoreRef!.innerHTML = `${blueScore}`;
-    orangeScoreRef!.innerHTML = `${orangeScore}`;
-    endScreenRef?.classList.add("end-screen--open");
-
-    setTimeout(() => {
-        winnerScreen();
-    }, 1500);
+    setText("final-blue-score", `${blueScore}`);
+    setText("final-orange-score", `${orangeScore}`);
+    document.getElementById("end-screen")?.classList.add("end-screen--open");
+    setTimeout(winnerScreen, 1500);
 }
 
 function winnerScreen() {
-    const winnerRef = document.getElementById("winner");
-    winnerRef?.classList.add("winner--open");
+    document.getElementById("winner")?.classList.add("winner--open");
+}
+
+function hideElement(id: string) {
+    document.getElementById(id)?.classList.add("d_none");
+}
+
+function showElement(id: string) {
+    document.getElementById(id)?.classList.remove("d_none");
+}
+
+function hideAll(selector: string) {
+    document.querySelectorAll<HTMLElement>(selector).forEach(element => element.classList.add("d_none"));
+}
+
+function showAll(selector: string) {
+    document.querySelectorAll<HTMLElement>(selector).forEach(element => element.classList.remove("d_none"));
+}
+
+function setText(id: string, text: string) {
+    const element = document.getElementById(id);
+    if (element) element.textContent = text;
 }

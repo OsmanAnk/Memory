@@ -1,7 +1,7 @@
 .memory--theme-code-vibes {
     .cards--theme-code-vibes .card {
-        width: 184px;
-        height: 184px;
+        width: 175px;
+        height: 175px;
     }
 
     .memory__header {
@@ -9,7 +9,14 @@
     }
 
     .memory__main {
-        // Code Vibes board styles here.
+        margin-top: 60px;
+    }
+
+    &.memory--board-24,
+    &.memory--board-36 {
+        .memory__main {
+            margin-top: 32px;
+        }
     }
 }
 

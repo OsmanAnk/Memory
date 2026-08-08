@@ -1,14 +1,17 @@
 .memory--theme-gaming {
+    font-family: 'Orbitron', sans-serif;
     background: #294F60;
     box-sizing: border-box;
     padding-top: 24px;
 
     .cards--theme-gaming .card {
-        width: 161px;
-        height: 184px;
+        width: 154px;
+        height: 176px;
+        border-radius: 18px;
 
+        .card__inner,
         .card__face {
-            border-radius: 12px;
+            border-radius: 18px;
         }
 
         .card__face:not(.card__face--back) {
@@ -24,6 +27,15 @@
                 object-fit: contain;
             }
         }
+
+        &.is-matched .card__face--back::after {
+            border-radius: 18px;
+            box-shadow: inset 0 0 0 3px #ED1B76;
+        }
+    }
+
+    .cards--theme-gaming {
+        gap: 10px;
     }
 
     .memory__header {
@@ -33,15 +45,280 @@
         border-radius: 10px;
     }
 
+    .players {
+        background-color: white;
+        border-radius: 10px;
+        gap: 48px;
+
+        img {
+            width: 32px;
+            height: 32px;
+        }
+
+        &__name {
+            display: none;
+        }
+    }
+
+    .players__blue--score,
+    .players__orange--score {
+        font-size: 32px;
+        width: 24px;
+    }
+
+    .players__blue,
+    .players__orange,
+    .current-player,
+    .exit__button span {
+        font-family: 'Orbitron', sans-serif;
+    }
+
+    .exit__button {
+        background: transparent;
+        border: 3px solid #E71C4F;
+        border-radius: 10px;
+        box-shadow: none;
+
+        img {
+            width: 26px;
+            height: 23px;
+            object-fit: contain;
+        }
+
+        &:hover {
+            box-shadow: 3px 3px 5px 0px #2F2E2E33;
+        }
+
+        &:hover img {
+            content: url('/assets/icons/exit_hover.svg');
+            filter: drop-shadow(3px 3px 5px #2F2E2E33);
+        }
+    }
+
+    .current-player {
+        color: white;
+        font-weight: 700;
+        font-style: normal;
+        font-size: 32px;
+        line-height: 100%;
+        letter-spacing: 7%;
+
+        img {
+            width: 32px;
+            height: 32px;
+            border-radius: 3px;
+            padding: 4px;
+        }
+
+        &--blue img {
+            background-color: #1FAAFC;
+        }
+
+        &--orange img {
+            background-color: #F58E39;
+        }
+    }
+
     .memory__main {
-        // Gaming board styles here.
+        margin-top: 60px;
+    }
+
+    &.memory--board-24,
+    &.memory--board-36 {
+        .memory__main {
+            margin-top: 32px;
+        }
+    }
+}
+
+.modal--theme-gaming {
+    .modal__content {
+        font-family: 'Orbitron', sans-serif;
+        border-radius: 20px;
+    }
+
+    .modal__text,
+    .modal__back,
+    .modal__exit {
+        font-family: inherit;
+    }
+
+    .modal__back,
+    .modal__exit {
+        border-radius: 10px;
+        box-sizing: border-box;
+    }
+
+    .modal__back {
+        color: white;
+        background: #ED1B76;
+        border: 1px solid #E71C4F;
+        padding: 18px 20px;
+
+        &:hover {
+            color: #ED1B76;
+            background: white;
+            padding: 17px 19px;
+            border: 2px solid #E71C4F;
+            box-shadow: 3px 3px 5px 0px #2F2E2E33;
+        }
+    }
+
+    .modal__exit {
+        color: #ED1B76;
+        background: #ED1B7614;
+        border: 2px solid #E71C4F;
+        padding: 17px 21px;
+
+        &:hover {
+            padding: 16px 20px;
+            border: 3px solid #E71C4F;
+            box-shadow: 3px 3px 5px 0px #2F2E2E33;
+        }
     }
 }
 
 .end-screen--theme-gaming {
-    // Gaming game-over styles here.
+    background: #294F60;
+    transform: translateY(100%);
+
+    &.end-screen--open {
+        transform: translateY(0);
+    }
+
+    .game-over {
+        background: #294F60;
+    }
+
+    .end-title {
+        color: #ED1B76;
+        text-shadow: none;
+        font-family: 'Orbitron', sans-serif;
+        font-weight: 900;
+        font-style: normal;
+        font-size: 124px;
+        line-height: 100%;
+        letter-spacing: 7%;
+    }
+
+    .players {
+        background-color: white;
+        border-radius: 10px;
+        gap: 48px;
+
+        img {
+            width: 32px;
+            height: 32px;
+        }
+    }
+
+    .players__blue--score,
+    .players__orange--score {
+        font-size: 32px;
+        width: 24px;
+    }
+
+    .final-score__title {
+        font-family: 'Orbitron', sans-serif;
+        font-weight: 700;
+        font-style: normal;
+        font-size: 28px;
+        line-height: 100%;
+        letter-spacing: 7%;
+        text-align: center;
+    }
+
+    .players__name {
+        display: none;
+    }
+
+    .players__blue,
+    .players__orange,
+    .end-title,
+    .final-score__title,
+    .final-score p {
+        font-family: 'Orbitron', sans-serif;
+    }
 }
 
 .winner--theme-gaming {
-    // Gaming winner styles here.
+    background: #294F60;
+    transform: translateY(100%);
+
+    &.winner--open {
+        transform: translateY(0);
+    }
+
+    .winner__screen > picture {
+        display: none;
+    }
+
+    .winner__is {
+        font-family: 'Orbitron', sans-serif;
+        font-weight: 700;
+        font-style: normal;
+        font-size: 28px;
+        line-height: 100%;
+        letter-spacing: 7%;
+        text-align: center;
+    }
+
+    .winner__blue--text {
+        color: #2298DB;
+        font-family: 'Orbitron', sans-serif;
+        font-weight: 700;
+        font-style: normal;
+        font-size: 64px;
+        line-height: 100%;
+        letter-spacing: 7%;
+        text-shadow: 4px 4px 4px #00000040;
+    }
+
+    .winner__orange--text,
+    .winner__draw--text {
+        color: #EA6900;
+        font-family: 'Orbitron', sans-serif;
+        font-weight: 700;
+        font-style: normal;
+        font-size: 64px;
+        line-height: 100%;
+        letter-spacing: 7%;
+        text-shadow: 4px 4px 4px #00000040;
+    }
+
+    .end-title {
+        color: #ED1B76;
+        font-family: 'Orbitron', sans-serif;
+        font-weight: 700;
+        font-style: normal;
+        font-size: 128px;
+        line-height: 100%;
+        letter-spacing: 7%;
+        text-align: center;
+        text-shadow: 4px 4px 4px #00000040;
+    }
+
+    .back-to-start.exit__button {
+        box-sizing: border-box;
+        border-radius: 10px;
+        border: 2px solid #E71C4F;
+        background: #ED1B7614;
+        padding: 17px 21px;
+        box-shadow: none;
+
+        &:hover {
+            border: 3px solid #E71C4F;
+            padding: 16px 20px;
+            box-shadow: 3px 3px 5px 0px #2F2E2E33;
+        }
+    }
+
+    .winner__is,
+    .winner__orange--text,
+    .winner__blue--text,
+    .winner__draw--text,
+    .end-title,
+    .exit__button span {
+        font-family: 'Orbitron', sans-serif;
+    }
 }
