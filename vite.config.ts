@@ -1,5 +1,5 @@
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-  base: "/projects/memory/"
+  base: "/modul-14/Memory/dist/"
 });
