@@ -210,7 +210,7 @@ ul {
 .options {
     display: flex;
     flex-direction: column;
-    gap: 32px;
+    gap: 54px;
 }
 
 .option {
@@ -232,6 +232,7 @@ ul {
         display: flex;
         align-items: center;
         gap: 16px;
+        margin-bottom: 24px;
     }
 
     &__icon {
