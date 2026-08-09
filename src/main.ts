@@ -1,7 +1,7 @@
 import './styles/style.scss';
 import './styles/themes/_code-vibes.scss';
 import './styles/themes/_gaming.scss';
-import { initCardsClick, resetFlippedCards, startCardGame } from './scripts/cards';
+import { initCardsClick, resetFlippedCards, startCardGame } from './scripts/card-game';
 import { bindChoiceGroup, getCheckedId } from './scripts/choices';
 import { hoverPreview } from './scripts/preview';
 
