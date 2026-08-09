@@ -1,9 +1,10 @@
 import './styles/style.scss';
 import './styles/themes/_code-vibes.scss';
 import './styles/themes/_gaming.scss';
-import { cardBackByTheme, cardsByTheme } from './cards';
+import { initCardsClick, resetFlippedCards, startCardGame } from './scripts/cards';
+import { bindChoiceGroup, getCheckedId } from './scripts/choices';
+import { hoverPreview } from './scripts/preview';
 
-let flippedCard: HTMLButtonElement[] = [];
 let activeTheme: string = "theme-code-vibes";
 let activePlayer: string = "blue";
 let activeCardCount: number = 0;
@@ -22,7 +23,10 @@ function init() {
     hoverPreview();
     openModal();
     initBackToStart();
-    initCardsClick();
+    initCardsClick({
+        onMatch: handleCardMatch,
+        onMismatch: handleCardMismatch,
+    });
     currentPlayer();
 }
 
@@ -37,8 +41,8 @@ function bindClick(id: string, callback: () => void) {
 
 /** Opens the settings screen from the home screen. */
 function startGame() {
-    hideElement("home");
-    showElement("settings");
+    setElementVisibility("home", false);
+    setElementVisibility("settings", true);
 }
 
 /** Starts a new memory round with the selected settings. */
@@ -49,18 +53,8 @@ function startMemory() {
     resetGame();
     setActiveOptions(theme, player);
     gameStarted(theme, board);
-    hideElement("settings");
-    showElement("memory");
-}
-
-/**
- * Returns the id of the checked choice for a settings group.
- * @param option - Choice group suffix such as theme, player, or board.
- * @returns The selected input id.
- */
-function getCheckedId(option: string) {
-    const selector = `.choices__item--${option}:checked`;
-    return document.querySelector<HTMLInputElement>(selector)!.id;
+    setElementVisibility("settings", false);
+    setElementVisibility("memory", true);
 }
 
 /**
@@ -82,178 +76,19 @@ function setActiveOptions(theme: string, player: string) {
  * @param board - Selected board-size input id.
  */
 function gameStarted(theme: string, board: string) {
-    const cardCount = Number(board.replace("board-size-", ""));
-    const cards = createGameCards(theme, cardCount);
-    activeCardCount = cardCount;
-    renderCards(cards, cardBackByTheme[theme]);
-    updateBoardClasses(cardCount);
-    updateCardsGrid(theme, cardCount);
+    activeCardCount = startCardGame(theme, board);
 }
 
-/**
- * Creates a shuffled list of card fronts containing matching pairs.
- * @param theme - Selected theme id.
- * @param cardCount - Total number of cards on the board.
- * @returns Shuffled card image paths.
- */
-function createGameCards(theme: string, cardCount: number) {
-    const pairCount = cardCount / 2;
-    const selectedCards = cardsByTheme[theme].slice(0, pairCount);
-    const gameCards = selectedCards.concat(selectedCards);
-    shuffleCards(gameCards);
-    return gameCards;
-}
-
-/**
- * Renders all cards into the cards list.
- * @param cards - Card front image paths.
- * @param cardBack - Card back image path.
- */
-function renderCards(cards: string[], cardBack: string) {
-    const cardsRef = document.getElementById("cards");
-    if (!cardsRef) return;
-    cardsRef.innerHTML = cards.map(card => cardTemplate(card, cardBack)).join("");
-}
-
-/**
- * Creates the markup for one playable card list item.
- * @param card - Card front image path.
- * @param cardBack - Card back image path.
- * @returns HTML string for one card.
- */
-function cardTemplate(card: string, cardBack: string) {
-    return `<li class="cards__item">
-        <button class="card" type="button" data-card="${card}">
-            <span class="card__inner">${cardFace(cardBack)}${cardBackFace(card)}</span>
-        </button>
-    </li>`;
-}
-
-/**
- * Creates the hidden card face markup.
- * @param src - Image path for the card back.
- * @returns HTML string for the card face.
- */
-function cardFace(src: string) {
-    return `<span class="card__face"><img src="${src}" alt=""></span>`;
-}
-
-/**
- * Creates the revealed card face markup.
- * @param src - Image path for the card front.
- * @returns HTML string for the revealed card face.
- */
-function cardBackFace(src: string) {
-    return `<span class="card__face card__face--back"><img src="${src}" alt=""></span>`;
-}
-
-/** Binds delegated card click handling to the card grid. */
-function initCardsClick() {
-    document.getElementById("cards")?.addEventListener("click", handleCardsClick);
-}
-
-/**
- * Handles card clicks and starts pair matching once two cards are flipped.
- * @param event - Click event from the cards container.
- */
-function handleCardsClick(event: MouseEvent) {
-    const card = getClickedCard(event);
-    if (!card || cannotFlipCard(card)) return;
-    card.classList.add("is-flipped");
-    flippedCard.push(card);
-    if (flippedCard.length === 2) {
-        handleFlippedPair();
-    }
-}
-
-/**
- * Finds the clicked card button from a click event.
- * @param event - Click event from the cards container.
- * @returns The clicked card button, or null when the click was outside a card.
- */
-function getClickedCard(event: MouseEvent) {
-    const target = event.target as HTMLElement;
-    return target.closest(".card") as HTMLButtonElement | null;
-}
-
-/**
- * Checks whether a card is currently blocked from flipping.
- * @param card - Card button to check.
- * @returns True when the card is already flipped or a pair is being evaluated.
- */
-function cannotFlipCard(card: HTMLButtonElement) {
-    return card.classList.contains("is-flipped") || flippedCard.length === 2;
-}
-
-/** Compares the two flipped cards and schedules match or reset behavior. */
-function handleFlippedPair() {
-    const [firstCard, secondCard] = flippedCard;
-    if (firstCard.dataset.card === secondCard.dataset.card) {
-        setTimeout(() => matchPair(firstCard, secondCard), 300);
-    } else {
-        setTimeout(() => resetPair(firstCard, secondCard), 1000);
-    }
-}
-
-/**
- * Marks a matching pair, scores the current player, and checks for game end.
- * @param firstCard - First flipped card.
- * @param secondCard - Second flipped card.
- */
-function matchPair(firstCard: HTMLButtonElement, secondCard: HTMLButtonElement) {
-    firstCard.classList.add("is-matched");
-    secondCard.classList.add("is-matched");
-    flippedCard = [];
+/** Scores the current player and checks for game end after a matching pair. */
+function handleCardMatch() {
     score();
     cardsCounter();
 }
 
-/**
- * Flips a non-matching pair back and switches the active player.
- * @param firstCard - First flipped card.
- * @param secondCard - Second flipped card.
- */
-function resetPair(firstCard: HTMLButtonElement, secondCard: HTMLButtonElement) {
-    firstCard.classList.remove("is-flipped");
-    secondCard.classList.remove("is-flipped");
-    flippedCard = [];
+/** Switches the player after a non-matching pair. */
+function handleCardMismatch() {
     switchPlayer();
     currentPlayer();
-}
-
-/**
- * Applies board-size classes to the memory screen.
- * @param cardCount - Total number of cards on the board.
- */
-function updateBoardClasses(cardCount: number) {
-    const memoryRef = document.getElementById("memory");
-    memoryRef?.classList.remove("memory--board-4", "memory--board-16");
-    memoryRef?.classList.remove("memory--board-24", "memory--board-36");
-    memoryRef?.classList.add(`memory--board-${cardCount}`);
-}
-
-/**
- * Applies theme and column styling to the cards grid.
- * @param theme - Selected theme id.
- * @param cardCount - Total number of cards on the board.
- */
-function updateCardsGrid(theme: string, cardCount: number) {
-    const cardsGrid = document.getElementById("cards");
-    if (!cardsGrid) return;
-    cardsGrid.classList.remove("cards--theme-code-vibes", "cards--theme-gaming");
-    cardsGrid.classList.add(`cards--${theme}`);
-    cardsGrid.style.gridTemplateColumns = `repeat(${getColumnCount(cardCount)}, 1fr)`;
-}
-
-/**
- * Returns the number of columns for a board size.
- * @param cardCount - Total number of cards on the board.
- * @returns Grid column count.
- */
-function getColumnCount(cardCount: number) {
-    if (cardCount === 4) return 2;
-    if (cardCount === 16) return 4;
-    return 6;
 }
 
 /**
@@ -315,189 +150,6 @@ function setImgSrc(id: string, src: string) {
     if (imgRef) imgRef.src = src;
 }
 
-/**
- * Shuffles cards in place with the Fisher-Yates algorithm.
- * @param cards - Card image paths to shuffle.
- */
-function shuffleCards(cards: string[]) {
-    for (let i = cards.length - 1; i > 0; i--) {
-        swapCards(cards, i, Math.floor(Math.random() * (i + 1)));
-    }
-}
-
-/**
- * Swaps two entries inside the cards array.
- * @param cards - Card image paths.
- * @param first - First array index.
- * @param second - Second array index.
- */
-function swapCards(cards: string[], first: number, second: number) {
-    const temp = cards[first];
-    cards[first] = cards[second];
-    cards[second] = temp;
-}
-
-/**
- * Binds change handlers for one settings choice group.
- * @param option - Choice group suffix such as theme, player, or board.
- */
-function bindChoiceGroup(option: string) {
-    const boxes = document.querySelectorAll<HTMLInputElement>(`.choices__item--${option}`);
-    boxes.forEach(box => bindChoice(box, boxes, option));
-}
-
-/**
- * Binds one choice input and updates selection-related UI on change.
- * @param box - Input to bind.
- * @param boxes - All inputs in the same group.
- * @param option - Choice group suffix.
- */
-function bindChoice(box: HTMLInputElement, boxes: NodeListOf<HTMLInputElement>, option: string) {
-    box.addEventListener("change", event => {
-        const currentCheckbox = event.target as HTMLInputElement;
-        checkedImg(currentCheckbox);
-        updateChosenText(option, currentCheckbox);
-        uncheckOtherBoxes(boxes, currentCheckbox);
-        updateChosenState();
-    });
-}
-
-/**
- * Unchecks all other inputs in a group and hides their preview images.
- * @param boxes - All inputs in the same group.
- * @param current - Currently selected input.
- */
-function uncheckOtherBoxes(boxes: NodeListOf<HTMLInputElement>, current: HTMLInputElement) {
-    if (!current.checked) return;
-    boxes.forEach(other => {
-        if (other === current) return;
-        other.checked = false;
-        uncheckedImg(other);
-    });
-}
-
-/**
- * Updates the selected-settings summary text.
- * @param option - Choice group suffix.
- * @param checkbox - Selected input.
- */
-function updateChosenText(option: string, checkbox: HTMLInputElement) {
-    const chosenTextRef = document.getElementById("chosen__" + option);
-    const text = getChoiceText(checkbox);
-    if (chosenTextRef && text) chosenTextRef.textContent = text;
-}
-
-/**
- * Reads the visible label text for a choice input.
- * @param checkbox - Choice input.
- * @returns Label text, or undefined when no label text exists.
- */
-function getChoiceText(checkbox: HTMLInputElement) {
-    const label = checkbox.closest(".choices__label");
-    return label?.querySelector(".choices__text")?.textContent;
-}
-
-/** Updates the selected-settings state and start button availability. */
-function updateChosenState() {
-    const isComplete = hasCompleteChoices();
-    if (isComplete) document.querySelector(".chosen")?.classList.add("chosen--complete");
-    updateStartButton(isComplete);
-    updateChosenLines(isComplete);
-}
-
-/**
- * Checks whether theme, player, and board choices are all selected.
- * @returns True when all required settings are selected.
- */
-function hasCompleteChoices() {
-    return Boolean(getCheckedBox("theme") && getCheckedBox("player") && getCheckedBox("board"));
-}
-
-/**
- * Returns the checked input for a choice group.
- * @param option - Choice group suffix.
- * @returns Checked input, or null when nothing is selected.
- */
-function getCheckedBox(option: string) {
-    return document.querySelector<HTMLInputElement>(`.choices__item--${option}:checked`);
-}
-
-/**
- * Enables or disables the start button.
- * @param isComplete - Whether all required settings are selected.
- */
-function updateStartButton(isComplete: boolean) {
-    const startRef = document.getElementById("start") as HTMLButtonElement | null;
-    if (startRef) startRef.disabled = !isComplete;
-}
-
-/**
- * Switches the summary separator graphics after all settings are selected.
- * @param isComplete - Whether all required settings are selected.
- */
-function updateChosenLines(isComplete: boolean) {
-    if (!isComplete) return;
-    hideAll(".chosen__line");
-    showAll(".chosen__line-3");
-}
-
-/**
- * Shows the preview image connected to the selected input.
- * @param currentCheckbox - Selected input.
- */
-function checkedImg(currentCheckbox: HTMLInputElement) {
-    getPreviewImg(currentCheckbox)?.classList.remove("d_none");
-}
-
-/**
- * Hides the preview image connected to an unselected input.
- * @param other - Unselected input.
- */
-function uncheckedImg(other: HTMLInputElement) {
-    getPreviewImg(other)?.classList.add("d_none");
-}
-
-/**
- * Gets the preview image element connected to a theme input.
- * @param checkbox - Theme input.
- * @returns Preview image element, or null when it does not exist.
- */
-function getPreviewImg(checkbox: HTMLInputElement) {
-    const themeName = checkbox.id.replace("theme-", "");
-    return document.getElementById("preview-" + themeName);
-}
-
-/** Binds hover preview behavior for theme choices. */
-function hoverPreview() {
-    const themeBoxes = document.querySelectorAll<HTMLInputElement>(".choices__item--theme");
-    themeBoxes.forEach(bindPreviewEvents);
-}
-
-/**
- * Binds mouseenter and mouseleave preview behavior to one theme choice.
- * @param checkbox - Theme input.
- */
-function bindPreviewEvents(checkbox: HTMLInputElement) {
-    const label = checkbox.closest(".choices__label");
-    label?.addEventListener("mouseenter", () => showPreviewImg(checkbox));
-    label?.addEventListener("mouseleave", showCheckedPreview);
-}
-
-/** Restores the preview image for the currently selected theme. */
-function showCheckedPreview() {
-    const checkedTheme = getCheckedBox("theme");
-    if (checkedTheme) showPreviewImg(checkedTheme);
-}
-
-/**
- * Shows only the preview image connected to a theme input.
- * @param checkbox - Theme input.
- */
-function showPreviewImg(checkbox: HTMLInputElement) {
-    hideAll(".preview__img");
-    getPreviewImg(checkbox)?.classList.remove("d_none");
-}
-
 /** Binds modal open, close, and exit controls. */
 function openModal() {
     const modal = document.getElementById("modal");
@@ -531,8 +183,8 @@ function closeModalElement(modal: HTMLElement | null) {
 function exitGame(modal: HTMLElement | null) {
     if (!modal) return;
     closeModal(modal);
-    hideElement("memory");
-    showElement("settings");
+    setElementVisibility("memory", false);
+    setElementVisibility("settings", true);
     resetGame();
 }
 
@@ -546,13 +198,13 @@ function initBackToStart() {
 /** Resets the current round and returns to the settings screen. */
 function backToStart() {
     resetGame();
-    hideElement("memory");
-    showElement("settings");
+    setElementVisibility("memory", false);
+    setElementVisibility("settings", true);
 }
 
 /** Resets round state, score, and end screens. */
 function resetGame() {
-    flippedCard = [];
+    resetFlippedCards();
     resetScore();
     hideEndScreens();
 }
@@ -622,8 +274,7 @@ function score() {
 
 /** Writes current score values into the visible scoreboard. */
 function updateScoreText() {
-    setText("players__blue--score", `${blueScore}`);
-    setText("players__orange--score", `${orangeScore}`);
+    setScoreTexts("players");
 }
 
 /** Resets both player scores to zero. */
@@ -648,20 +299,29 @@ function showWinner() {
 
 /** Shows the winner state for the blue player. */
 function blueWins() {
-    gameOverScreen();
-    setWinnerHtml("BLUE PLAYER", "winner__blue--text", getWinIcon("blue"));
+    showResult("BLUE PLAYER", "winner__blue--text", getWinIcon("blue"));
 }
 
 /** Shows the winner state for the orange player. */
 function orangeWins() {
-    gameOverScreen();
-    setWinnerHtml("ORANGE PLAYER", "winner__draw--text", getWinIcon("orange"));
+    showResult("ORANGE PLAYER", "winner__draw--text", getWinIcon("orange"));
 }
 
 /** Shows the draw state. */
 function draw() {
+    showResult("DRAW", "end-title", getDrawIcon(), "It's a");
+}
+
+/**
+ * Opens the result screens and renders the winner content.
+ * @param text - Main result text.
+ * @param textClass - CSS class for the main result text.
+ * @param icon - Icon image path.
+ * @param prefix - Text displayed above the main result text.
+ */
+function showResult(text: string, textClass: string, icon: string, prefix = "The winner is") {
     gameOverScreen();
-    setWinnerHtml("DRAW", "end-title", getDrawIcon(), "It's a");
+    setWinnerHtml(text, textClass, icon, prefix);
 }
 
 /**
@@ -712,8 +372,7 @@ function winnerTemplate(text: string, textClass: string, icon: string, prefix: s
 
 /** Updates final scores and opens the game-over screen. */
 function gameOverScreen() {
-    setText("final-blue-score", `${blueScore}`);
-    setText("final-orange-score", `${orangeScore}`);
+    setScoreTexts("final");
     document.getElementById("end-screen")?.classList.add("end-screen--open");
     setTimeout(winnerScreen, 1500);
 }
@@ -724,35 +383,12 @@ function winnerScreen() {
 }
 
 /**
- * Hides an element by adding the d_none class.
+ * Shows or hides an element by toggling the d_none class.
  * @param id - Element id.
+ * @param isVisible - Whether the element should be visible.
  */
-function hideElement(id: string) {
-    document.getElementById(id)?.classList.add("d_none");
-}
-
-/**
- * Shows an element by removing the d_none class.
- * @param id - Element id.
- */
-function showElement(id: string) {
-    document.getElementById(id)?.classList.remove("d_none");
-}
-
-/**
- * Hides every element matching a selector.
- * @param selector - CSS selector.
- */
-function hideAll(selector: string) {
-    document.querySelectorAll<HTMLElement>(selector).forEach(element => element.classList.add("d_none"));
-}
-
-/**
- * Shows every element matching a selector.
- * @param selector - CSS selector.
- */
-function showAll(selector: string) {
-    document.querySelectorAll<HTMLElement>(selector).forEach(element => element.classList.remove("d_none"));
+function setElementVisibility(id: string, isVisible: boolean) {
+    document.getElementById(id)?.classList.toggle("d_none", !isVisible);
 }
 
 /**
@@ -763,4 +399,15 @@ function showAll(selector: string) {
 function setText(id: string, text: string) {
     const element = document.getElementById(id);
     if (element) element.textContent = text;
+}
+
+/**
+ * Writes both player scores into one scoreboard area.
+ * @param prefix - Score element id prefix.
+ */
+function setScoreTexts(prefix: "players" | "final") {
+    const blueScoreId = prefix === "players" ? "players__blue--score" : "final-blue-score";
+    const orangeScoreId = prefix === "players" ? "players__orange--score" : "final-orange-score";
+    setText(blueScoreId, `${blueScore}`);
+    setText(orangeScoreId, `${orangeScore}`);
 }
